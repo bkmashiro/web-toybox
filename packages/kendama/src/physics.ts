@@ -8,15 +8,23 @@ export interface Body2D extends Vec2 {
   vy: number;
 }
 
+export interface RigidBall2D extends Body2D {
+  angle: number;
+  angularVelocity: number;
+}
+
+export type KendamaMode = 'normal' | 'hard';
 export type KendamaCatch = 'none' | 'big-cup' | 'small-cup' | 'base-cup' | 'spike';
 
 export interface KendamaState {
   handle: Body2D;
-  ball: Body2D;
+  ball: RigidBall2D;
   ropeLength: number;
   ballRadius: number;
   tilt: number;
   caught: KendamaCatch;
+  mode: KendamaMode;
+  releaseGrace: number;
   impactSerial: number;
   impactSpeed: number;
   impactKind: KendamaCatch | 'edge';
@@ -37,26 +45,41 @@ export interface KendamaGeometry {
   smallCup: Vec2;
   baseCup: Vec2;
   spike: Vec2;
+  upperCupAxis: Vec2;
+  baseCupAxis: Vec2;
+  spikeAxis: Vec2;
 }
 
 const clamp = (value: number, low: number, high: number) => Math.min(high, Math.max(low, value));
+const dot = (a: Vec2, b: Vec2) => a.x * b.x + a.y * b.y;
+const cross = (a: Vec2, b: Vec2) => a.x * b.y - a.y * b.x;
 const rotate = (point: Vec2, angle: number): Vec2 => ({
   x: point.x * Math.cos(angle) - point.y * Math.sin(angle),
   y: point.x * Math.sin(angle) + point.y * Math.cos(angle),
 });
+const normalizeAngle = (angle: number) => Math.atan2(Math.sin(angle), Math.cos(angle));
 
-export function createKendamaState(width: number, height: number): KendamaState {
+export function createKendamaState(width: number, height: number, mode: KendamaMode = 'normal'): KendamaState {
   const safeWidth = Math.max(240, width);
   const safeHeight = Math.max(320, height);
   const handle = { x: safeWidth * 0.5, y: safeHeight * 0.42, vx: 0, vy: 0 };
   const ropeLength = Math.min(184, safeHeight * 0.3);
   return {
     handle,
-    ball: { x: handle.x + ropeLength * 0.34, y: handle.y + ropeLength, vx: 0, vy: 0 },
+    ball: {
+      x: handle.x + ropeLength * 0.34,
+      y: handle.y + ropeLength,
+      vx: 0,
+      vy: 0,
+      angle: Math.PI * 0.58,
+      angularVelocity: 0,
+    },
     ropeLength,
     ballRadius: 24,
     tilt: -0.08,
     caught: 'none',
+    mode,
+    releaseGrace: 0,
     impactSerial: 0,
     impactSpeed: 0,
     impactKind: 'edge',
@@ -81,6 +104,17 @@ export function getKendamaGeometry(state: KendamaState): KendamaGeometry {
     smallCup: place(local.smallCup),
     baseCup: place(local.baseCup),
     spike: place(local.spike),
+    upperCupAxis: rotate({ x: 0, y: -1 }, state.tilt),
+    baseCupAxis: rotate({ x: 0, y: 1 }, state.tilt),
+    spikeAxis: rotate({ x: 0, y: -1 }, state.tilt),
+  };
+}
+
+export function getBallHole(state: KendamaState): Vec2 {
+  const distance = state.ballRadius * 0.72;
+  return {
+    x: state.ball.x + Math.cos(state.ball.angle) * distance,
+    y: state.ball.y + Math.sin(state.ball.angle) * distance,
   };
 }
 
@@ -91,16 +125,121 @@ function signalImpact(state: KendamaState, speed: number, kind: KendamaState['im
   state.impactKind = kind;
 }
 
-function caughtPosition(state: KendamaState, geometry: KendamaGeometry): Vec2 | undefined {
-  if (state.caught === 'big-cup') return { x: geometry.bigCup.x, y: geometry.bigCup.y - state.ballRadius * 0.82 };
-  if (state.caught === 'small-cup') return { x: geometry.smallCup.x, y: geometry.smallCup.y - state.ballRadius * 0.82 };
-  if (state.caught === 'base-cup') return { x: geometry.baseCup.x, y: geometry.baseCup.y + state.ballRadius * 0.82 };
-  if (state.caught === 'spike') return { x: geometry.spike.x, y: geometry.spike.y - state.ballRadius * 0.38 };
+function caughtPose(state: KendamaState, geometry: KendamaGeometry): { position: Vec2; angle?: number } | undefined {
+  const seat = state.ballRadius * 0.82;
+  if (state.caught === 'big-cup') return {
+    position: { x: geometry.bigCup.x + geometry.upperCupAxis.x * seat, y: geometry.bigCup.y + geometry.upperCupAxis.y * seat },
+  };
+  if (state.caught === 'small-cup') return {
+    position: { x: geometry.smallCup.x + geometry.upperCupAxis.x * seat, y: geometry.smallCup.y + geometry.upperCupAxis.y * seat },
+  };
+  if (state.caught === 'base-cup') return {
+    position: { x: geometry.baseCup.x + geometry.baseCupAxis.x * seat, y: geometry.baseCup.y + geometry.baseCupAxis.y * seat },
+  };
+  if (state.caught === 'spike') return {
+    position: {
+      x: geometry.spike.x + geometry.spikeAxis.x * state.ballRadius * 0.72,
+      y: geometry.spike.y + geometry.spikeAxis.y * state.ballRadius * 0.72,
+    },
+    angle: Math.atan2(-geometry.spikeAxis.y, -geometry.spikeAxis.x),
+  };
   return undefined;
 }
 
+interface CupCandidate {
+  kind: Exclude<KendamaCatch, 'none' | 'spike'>;
+  point: Vec2;
+  axis: Vec2;
+  radius: number;
+}
+
+function hardCupContact(state: KendamaState, candidate: CupCandidate): boolean {
+  const relative = { x: state.ball.x - candidate.point.x, y: state.ball.y - candidate.point.y };
+  const tangent = { x: -candidate.axis.y, y: candidate.axis.x };
+  const axial = dot(relative, candidate.axis);
+  const lateral = dot(relative, tangent);
+  const mouthHalfWidth = Math.max(3, candidate.radius - state.ballRadius * 0.82);
+  const relativeVelocity = {
+    x: state.ball.vx - state.handle.vx,
+    y: state.ball.vy - state.handle.vy,
+  };
+  const approach = -dot(relativeVelocity, candidate.axis);
+  const centered = Math.abs(lateral) <= mouthHalfWidth;
+  const atSeat = axial >= state.ballRadius * 0.7 && axial <= state.ballRadius * 1.12;
+  const catchableSpeed = approach > 0 && approach < 520 && Math.abs(dot(relativeVelocity, tangent)) < 360;
+  if (centered && atSeat && catchableSpeed) {
+    state.caught = candidate.kind;
+    signalImpact(state, Math.hypot(relativeVelocity.x, relativeVelocity.y), candidate.kind);
+    return true;
+  }
+
+  for (const side of [-1, 1]) {
+    const rim = {
+      x: candidate.point.x + tangent.x * candidate.radius * side,
+      y: candidate.point.y + tangent.y * candidate.radius * side,
+    };
+    const dx = state.ball.x - rim.x;
+    const dy = state.ball.y - rim.y;
+    const distance = Math.hypot(dx, dy);
+    if (distance >= state.ballRadius || distance <= 0) continue;
+    const normal = { x: dx / distance, y: dy / distance };
+    const penetration = state.ballRadius - distance;
+    state.ball.x += normal.x * penetration;
+    state.ball.y += normal.y * penetration;
+    const incoming = (state.ball.vx - state.handle.vx) * normal.x + (state.ball.vy - state.handle.vy) * normal.y;
+    if (incoming < 0) {
+      state.ball.vx -= incoming * normal.x * 1.42;
+      state.ball.vy -= incoming * normal.y * 1.42;
+      state.ball.angularVelocity += side * incoming * 0.025;
+      signalImpact(state, Math.abs(incoming), candidate.kind);
+    }
+    return false;
+  }
+  return false;
+}
+
+function hardSpikeContact(state: KendamaState, geometry: KendamaGeometry): boolean {
+  const hole = getBallHole(state);
+  const holeToTip = { x: geometry.spike.x - hole.x, y: geometry.spike.y - hole.y };
+  const holeDistance = Math.hypot(holeToTip.x, holeToTip.y);
+  const holeAxis = { x: Math.cos(state.ball.angle), y: Math.sin(state.ball.angle) };
+  const targetHoleAxis = { x: -geometry.spikeAxis.x, y: -geometry.spikeAxis.y };
+  const alignment = dot(holeAxis, targetHoleAxis);
+  const relativeVelocity = {
+    x: state.ball.vx - state.handle.vx,
+    y: state.ball.vy - state.handle.vy,
+  };
+  const insertionSpeed = dot(relativeVelocity, targetHoleAxis);
+  if (
+    holeDistance <= state.ballRadius * 0.28
+    && alignment >= Math.cos(Math.PI / 10)
+    && insertionSpeed > 0
+    && insertionSpeed < 360
+    && Math.abs(state.ball.angularVelocity) < 5
+  ) {
+    state.caught = 'spike';
+    signalImpact(state, Math.hypot(relativeVelocity.x, relativeVelocity.y), 'spike');
+    return true;
+  }
+  return false;
+}
+
 function tryCatch(state: KendamaState, geometry: KendamaGeometry): void {
-  if (state.caught !== 'none' || state.ball.vy < 0) return;
+  if (state.caught !== 'none' || state.releaseGrace > 0) return;
+  if (state.mode === 'hard') {
+    const candidates: CupCandidate[] = [
+      { kind: 'big-cup', point: geometry.bigCup, axis: geometry.upperCupAxis, radius: 30 },
+      { kind: 'small-cup', point: geometry.smallCup, axis: geometry.upperCupAxis, radius: 24 },
+      { kind: 'base-cup', point: geometry.baseCup, axis: geometry.baseCupAxis, radius: 22 },
+    ];
+    for (const candidate of candidates) {
+      if (hardCupContact(state, candidate)) return;
+    }
+    hardSpikeContact(state, geometry);
+    return;
+  }
+
+  if (state.ball.vy < 0) return;
   const candidates: Array<{ kind: KendamaCatch; point: Vec2; radius: number }> = [
     { kind: 'big-cup', point: geometry.bigCup, radius: 30 },
     { kind: 'small-cup', point: geometry.smallCup, radius: 24 },
@@ -124,8 +263,56 @@ function tryCatch(state: KendamaState, geometry: KendamaGeometry): void {
 export function releaseKendama(state: KendamaState): void {
   if (state.caught === 'none') return;
   state.caught = 'none';
+  state.releaseGrace = state.mode === 'hard' ? 0.24 : 0.12;
   state.ball.vx += state.handle.vx * 0.7;
-  state.ball.vy -= 80 + Math.abs(state.handle.vy) * 0.25;
+  state.ball.vy -= 110 + Math.abs(state.handle.vy) * 0.25;
+  state.ball.angularVelocity += state.handle.vx * 0.015;
+}
+
+function constrainRope(state: KendamaState, geometry: KendamaGeometry): void {
+  if (state.mode !== 'hard') {
+    const dx = state.ball.x - geometry.stringAnchor.x;
+    const dy = state.ball.y - geometry.stringAnchor.y;
+    const distance = Math.hypot(dx, dy);
+    if (distance <= state.ropeLength || distance <= 0) return;
+    const normal = { x: dx / distance, y: dy / distance };
+    state.ball.x = geometry.stringAnchor.x + normal.x * state.ropeLength;
+    state.ball.y = geometry.stringAnchor.y + normal.y * state.ropeLength;
+    const outward = (state.ball.vx - state.handle.vx) * normal.x + (state.ball.vy - state.handle.vy) * normal.y;
+    if (outward > 0) {
+      state.ball.vx -= outward * normal.x;
+      state.ball.vy -= outward * normal.y;
+    }
+    return;
+  }
+
+  const hole = getBallHole(state);
+  const dx = hole.x - geometry.stringAnchor.x;
+  const dy = hole.y - geometry.stringAnchor.y;
+  const distance = Math.hypot(dx, dy);
+  if (distance <= state.ropeLength || distance <= 0) return;
+  const normal = { x: dx / distance, y: dy / distance };
+  const correction = distance - state.ropeLength;
+  state.ball.x -= normal.x * correction;
+  state.ball.y -= normal.y * correction;
+
+  const arm = {
+    x: Math.cos(state.ball.angle) * state.ballRadius * 0.72,
+    y: Math.sin(state.ball.angle) * state.ballRadius * 0.72,
+  };
+  const holeVelocity = {
+    x: state.ball.vx - state.ball.angularVelocity * arm.y,
+    y: state.ball.vy + state.ball.angularVelocity * arm.x,
+  };
+  const outward = (holeVelocity.x - state.handle.vx) * normal.x + (holeVelocity.y - state.handle.vy) * normal.y;
+  if (outward <= 0) return;
+  const inertia = 0.5 * state.ballRadius * state.ballRadius;
+  const armCrossNormal = cross(arm, normal);
+  const impulseMagnitude = outward / (1 + armCrossNormal * armCrossNormal / inertia);
+  const impulse = { x: -normal.x * impulseMagnitude, y: -normal.y * impulseMagnitude };
+  state.ball.vx += impulse.x;
+  state.ball.vy += impulse.y;
+  state.ball.angularVelocity += cross(arm, impulse) / inertia;
 }
 
 export function stepKendama(
@@ -137,6 +324,7 @@ export function stepKendama(
   const step = clamp(Number.isFinite(dt) ? dt : 0, 0, 1 / 30);
   const width = Math.max(1, bounds.width);
   const height = Math.max(1, bounds.height);
+  state.releaseGrace = Math.max(0, state.releaseGrace - step);
 
   if (input.held && Number.isFinite(input.x) && Number.isFinite(input.y)) {
     const ax = (input.x - state.handle.x) * 105 - state.handle.vx * 17;
@@ -155,12 +343,14 @@ export function stepKendama(
   state.tilt += (targetTilt - state.tilt) * Math.min(1, step * 10);
 
   const geometry = getKendamaGeometry(state);
-  const attached = caughtPosition(state, geometry);
+  const attached = caughtPose(state, geometry);
   if (attached) {
-    state.ball.x = attached.x;
-    state.ball.y = attached.y;
+    state.ball.x = attached.position.x;
+    state.ball.y = attached.position.y;
     state.ball.vx = state.handle.vx;
     state.ball.vy = state.handle.vy;
+    state.ball.angularVelocity = 0;
+    if (attached.angle !== undefined) state.ball.angle = attached.angle;
     return;
   }
 
@@ -168,34 +358,25 @@ export function stepKendama(
   const drag = Math.exp(-0.16 * step);
   state.ball.vx *= drag;
   state.ball.vy *= drag;
+  state.ball.angularVelocity *= Math.exp(-0.32 * step);
   state.ball.x += state.ball.vx * step;
   state.ball.y += state.ball.vy * step;
+  state.ball.angle = normalizeAngle(state.ball.angle + state.ball.angularVelocity * step);
 
-  const dx = state.ball.x - geometry.stringAnchor.x;
-  const dy = state.ball.y - geometry.stringAnchor.y;
-  const distance = Math.hypot(dx, dy);
-  if (distance > state.ropeLength && distance > 0) {
-    const nx = dx / distance;
-    const ny = dy / distance;
-    state.ball.x = geometry.stringAnchor.x + nx * state.ropeLength;
-    state.ball.y = geometry.stringAnchor.y + ny * state.ropeLength;
-    const relativeOutward = (state.ball.vx - state.handle.vx) * nx + (state.ball.vy - state.handle.vy) * ny;
-    if (relativeOutward > 0) {
-      state.ball.vx -= relativeOutward * nx;
-      state.ball.vy -= relativeOutward * ny;
-    }
-  }
+  constrainRope(state, geometry);
 
   const radius = state.ballRadius;
   if (state.ball.x < radius || state.ball.x > width - radius) {
     signalImpact(state, Math.abs(state.ball.vx), 'edge');
     state.ball.x = clamp(state.ball.x, radius, width - radius);
     state.ball.vx *= -0.56;
+    state.ball.angularVelocity += state.ball.vy * 0.006;
   }
   if (state.ball.y < radius || state.ball.y > height - radius) {
     signalImpact(state, Math.abs(state.ball.vy), 'edge');
     state.ball.y = clamp(state.ball.y, radius, height - radius);
     state.ball.vy *= -0.48;
+    state.ball.angularVelocity -= state.ball.vx * 0.008;
   }
 
   tryCatch(state, geometry);

@@ -1,6 +1,7 @@
 export { KendamaVoice } from './audio';
 export {
   createKendamaState,
+  getBallHole,
   getKendamaGeometry,
   releaseKendama,
   stepKendama,
@@ -11,6 +12,8 @@ export type {
   KendamaCatch,
   KendamaGeometry,
   KendamaInput,
+  KendamaMode,
+  RigidBall2D,
   KendamaState,
   Vec2,
 } from './physics';

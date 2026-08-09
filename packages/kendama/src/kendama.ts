@@ -1,10 +1,12 @@
 import { KendamaVoice } from './audio';
 import {
   createKendamaState,
+  getBallHole,
   getKendamaGeometry,
   releaseKendama,
   stepKendama,
   type KendamaState,
+  type KendamaMode,
 } from './physics';
 import { styles } from './styles';
 
@@ -15,10 +17,12 @@ const HTMLElementBase = (typeof HTMLElement === 'undefined' ? class {} : HTMLEle
 export interface KendamaOptions {
   sound?: boolean;
   ropeLength?: number;
+  mode?: KendamaMode;
 }
 
 export class RetroKendamaElement extends HTMLElementBase {
   private readonly canvas = document.createElement('canvas');
+  private readonly hint = document.createElement('p');
   private readonly context = this.canvas.getContext('2d')!;
   private readonly voice = new KendamaVoice();
   private stateValue: KendamaState = createKendamaState(640, 620);
@@ -34,13 +38,12 @@ export class RetroKendamaElement extends HTMLElementBase {
     super();
     const root = this.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
-    const hint = document.createElement('p');
     style.textContent = styles;
-    hint.className = 'hint';
-    hint.textContent = '拖住剑身甩球 · 双击放球';
+    this.hint.className = 'hint';
+    this.syncHint();
     this.canvas.setAttribute('aria-label', '可甩动的网页剑玉');
     this.canvas.tabIndex = 0;
-    root.append(style, this.canvas, hint);
+    root.append(style, this.canvas, this.hint);
   }
 
   get state(): Readonly<KendamaState> { return this.stateValue; }
@@ -65,6 +68,15 @@ export class RetroKendamaElement extends HTMLElementBase {
   configure(options: KendamaOptions): void {
     if (typeof options.sound === 'boolean') this.soundEnabled = options.sound;
     if (Number.isFinite(options.ropeLength)) this.stateValue.ropeLength = Math.min(260, Math.max(90, options.ropeLength!));
+    if (options.mode && options.mode !== this.stateValue.mode) this.setMode(options.mode);
+  }
+
+  setMode(mode: KendamaMode): void {
+    const ropeLength = this.stateValue.ropeLength;
+    this.stateValue = createKendamaState(this.clientWidth || 640, this.clientHeight || 620, mode);
+    this.stateValue.ropeLength = ropeLength;
+    this.previousImpact = 0;
+    this.syncHint();
   }
 
   async unlockSound(): Promise<boolean> {
@@ -73,11 +85,17 @@ export class RetroKendamaElement extends HTMLElementBase {
   }
 
   reset = (): void => {
-    this.stateValue = createKendamaState(this.clientWidth || 640, this.clientHeight || 620);
+    this.stateValue = createKendamaState(this.clientWidth || 640, this.clientHeight || 620, this.stateValue.mode);
     this.previousImpact = 0;
   };
 
   release = (): void => releaseKendama(this.stateValue);
+
+  private syncHint(): void {
+    this.hint.textContent = this.stateValue.mode === 'hard'
+      ? '困难模式 · 球洞对准剑尖才能入玉'
+      : '普通模式 · 拖住剑身甩球 · 双击放球';
+  }
 
   destroy(): void {
     cancelAnimationFrame(this.frame);
@@ -167,7 +185,8 @@ export class RetroKendamaElement extends HTMLElementBase {
     context.lineWidth = 2;
     context.beginPath();
     context.moveTo(geometry.stringAnchor.x, geometry.stringAnchor.y);
-    context.lineTo(this.stateValue.ball.x, this.stateValue.ball.y);
+    const stringEnd = this.stateValue.mode === 'hard' ? getBallHole(this.stateValue) : this.stateValue.ball;
+    context.lineTo(stringEnd.x, stringEnd.y);
     context.stroke();
 
     context.save();
@@ -204,23 +223,32 @@ export class RetroKendamaElement extends HTMLElementBase {
     context.stroke();
     context.restore();
 
-    const ballGradient = context.createRadialGradient(
-      this.stateValue.ball.x - 8, this.stateValue.ball.y - 10, 2,
-      this.stateValue.ball.x, this.stateValue.ball.y, this.stateValue.ballRadius,
-    );
+    context.save();
+    context.translate(this.stateValue.ball.x, this.stateValue.ball.y);
+    context.rotate(this.stateValue.ball.angle);
+    const ballGradient = context.createRadialGradient(-8, -10, 2, 0, 0, this.stateValue.ballRadius);
     ballGradient.addColorStop(0, '#f65e42');
     ballGradient.addColorStop(1, '#a71f24');
     context.fillStyle = ballGradient;
     context.strokeStyle = '#651d1e';
     context.lineWidth = 4;
     context.beginPath();
-    context.arc(this.stateValue.ball.x, this.stateValue.ball.y, this.stateValue.ballRadius, 0, Math.PI * 2);
+    context.arc(0, 0, this.stateValue.ballRadius, 0, Math.PI * 2);
     context.fill();
+    context.stroke();
+    context.strokeStyle = 'rgba(255,190,135,.45)';
+    context.lineWidth = 2;
+    context.beginPath();
+    context.arc(0, 0, this.stateValue.ballRadius * 0.63, -0.8, 0.8);
     context.stroke();
     context.fillStyle = '#3d2118';
     context.beginPath();
-    context.ellipse(this.stateValue.ball.x, this.stateValue.ball.y - this.stateValue.ballRadius * 0.68, 7, 4, 0, 0, Math.PI * 2);
+    context.ellipse(this.stateValue.ballRadius * 0.72, 0, 7, 4.5, 0, 0, Math.PI * 2);
     context.fill();
+    context.strokeStyle = '#f0a35f';
+    context.lineWidth = 1.5;
+    context.stroke();
+    context.restore();
   }
 }
 

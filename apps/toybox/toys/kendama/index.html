@@ -15,15 +15,17 @@
     <section class="toy-copy">
       <p class="eyebrow">木头 · 棉线 · 重力</p>
       <h1>把球<br /><em>接回来。</em></h1>
-      <p class="lede">拖住剑身快速画圈，再放慢手腕，让木球落进大皿、小皿或剑尖。双击画面可以把接住的球重新放下。</p>
+      <p class="lede">拖住剑身快速画圈，再放慢手腕，让木球落进大皿或小皿。困难模式里，绳子拴在会旋转的球洞上；想入玉，位置、速度和洞口角度都要对。</p>
       <div class="controls">
         <button id="sound-unlock" class="primary" type="button">点一下打开木头声</button>
         <button id="release" type="button">放球</button>
+        <button id="mode" type="button" aria-pressed="true">困难模式：开</button>
         <button id="reset" type="button">重新来</button>
       </div>
       <dl class="telemetry">
         <div><dt>现在</dt><dd><output id="catch-state">还在空中</output></dd></div>
         <div><dt>球速</dt><dd><output id="ball-speed">0 px/s</output></dd></div>
+        <div><dt>球洞</dt><dd><output id="hole-angle">0°</output></dd></div>
       </dl>
       <code>@web-toybox/kendama · npm 包准备中</code>
     </section>
