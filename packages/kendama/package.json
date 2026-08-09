@@ -1,0 +1,28 @@
+{
+  "name": "@web-toybox/kendama",
+  "version": "0.0.1",
+  "description": "A dependency-free, physics-driven kendama Web Component.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bkmashiro/web-toybox.git",
+    "directory": "packages/kendama"
+  },
+  "homepage": "https://bkmashiro.github.io/web-toybox/toys/kendama/",
+  "bugs": "https://github.com/bkmashiro/web-toybox/issues",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": true,
+  "files": ["dist", "README.md", "LICENSE"],
+  "main": "./dist/kendama.umd.cjs",
+  "module": "./dist/kendama.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/kendama.js",
+      "require": "./dist/kendama.umd.cjs"
+    }
+  },
+  "dependencies": {},
+  "publishConfig": { "access": "public" }
+}

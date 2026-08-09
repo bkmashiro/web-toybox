@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="一只只用浏览器原生能力做成的复古网页玩具。" />
+  <title>旧玩具箱 · Web Toybox</title>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./"><span class="brand-mark">玩</span>WEB TOYBOX</a>
+    <a class="repo-link" href="https://github.com/bkmashiro/web-toybox">SOURCE ↗</a>
+  </header>
+  <main>
+    <section class="hero">
+      <div>
+        <p class="kicker">OLD TOYS, LIVE PHYSICS</p>
+        <h1>打开一只<em>旧玩具箱。</em></h1>
+      </div>
+      <p class="hero-note"><strong>不用电池，也不装一堆库。</strong>木头、棉线、铁皮和一点浏览器物理。挑一只，拿出来玩。</p>
+    </section>
+    <section class="catalog" aria-labelledby="catalog-title">
+      <div class="catalog-head"><h2 id="catalog-title">柜台里的玩具</h2><span>CATALOG 2026</span></div>
+      <div class="toy-grid" id="toy-grid"></div>
+    </section>
+  </main>
+  <template id="toy-card">
+    <article class="toy-card">
+      <div class="toy-image"><img width="720" height="540" /><span class="toy-verb"></span></div>
+      <div class="toy-body">
+        <div class="toy-heading"><h3 class="toy-name"></h3><span class="toy-kana"></span></div>
+        <p class="toy-description"></p>
+        <div class="toy-meta"><span class="toy-status"></span><code class="toy-package"></code></div>
+      </div>
+      <a class="toy-link"></a>
+    </article>
+  </template>
+  <footer>WEB TOYBOX · 原生浏览器 API 制作 · 每只玩具独立打包</footer>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

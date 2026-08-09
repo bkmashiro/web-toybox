@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="一只零依赖、可以甩和接的网页剑玉。" />
+  <title>剑玉 · 旧玩具箱</title>
+</head>
+<body>
+  <header class="toy-header">
+    <a href="../../">← 回玩具箱</a>
+    <span>NO. 002 · KENDAMA</span>
+  </header>
+  <main class="toy-layout">
+    <section class="toy-copy">
+      <p class="eyebrow">木头 · 棉线 · 重力</p>
+      <h1>把球<br /><em>接回来。</em></h1>
+      <p class="lede">拖住剑身快速画圈，再放慢手腕，让木球落进大皿、小皿或剑尖。双击画面可以把接住的球重新放下。</p>
+      <div class="controls">
+        <button id="sound-unlock" class="primary" type="button">点一下打开木头声</button>
+        <button id="release" type="button">放球</button>
+        <button id="reset" type="button">重新来</button>
+      </div>
+      <dl class="telemetry">
+        <div><dt>现在</dt><dd><output id="catch-state">还在空中</output></dd></div>
+        <div><dt>球速</dt><dd><output id="ball-speed">0 px/s</output></dd></div>
+      </dl>
+      <code>@web-toybox/kendama · npm 包准备中</code>
+    </section>
+    <section class="stage-frame" aria-label="剑玉试玩区"><div id="stage"></div></section>
+  </main>
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>
