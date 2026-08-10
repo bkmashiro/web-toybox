@@ -62,6 +62,7 @@ export function bindAudioControls({
   };
 
   const attempt = (event?: Event): Promise<boolean> => {
+    if (event?.isTrusted === false) return Promise.resolve(false);
     if (event?.target && button.contains(event.target as Node)) return Promise.resolve(false);
     if (target.playbackState === 'running') {
       markRunning();

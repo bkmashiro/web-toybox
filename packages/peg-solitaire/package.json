@@ -1,0 +1,19 @@
+{
+  "name": "@web-toybox/peg-solitaire",
+  "version": "0.0.1",
+  "description": "A dependency-free peg solitaire Web Component.",
+  "repository": {"type":"git","url":"git+https://github.com/bkmashiro/web-toybox.git","directory":"packages/peg-solitaire"},
+  "homepage": "https://bkmashiro.github.io/web-toybox/toys/peg-solitaire/",
+  "bugs": "https://github.com/bkmashiro/web-toybox/issues",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": true,
+  "files": ["dist","README.md","LICENSE"],
+  "main": "./dist/peg-solitaire.umd.cjs",
+  "module": "./dist/peg-solitaire.js",
+  "types": "./dist/index.d.ts",
+  "exports": {".": {"types":"./dist/index.d.ts","import":"./dist/peg-solitaire.js","require":"./dist/peg-solitaire.umd.cjs"}},
+  "dependencies": {},
+  "publishConfig": {"access":"public"},
+  "scripts": {"build":"vite build --config vite.config.js && tsc -p tsconfig.build.json"}
+}

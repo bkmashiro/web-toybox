@@ -26,6 +26,15 @@ importers:
       '@web-toybox/kendama':
         specifier: workspace:*
         version: link:../../packages/kendama
+      '@web-toybox/peg-solitaire':
+        specifier: workspace:*
+        version: link:../../packages/peg-solitaire
+      '@web-toybox/sliding-puzzle':
+        specifier: workspace:*
+        version: link:../../packages/sliding-puzzle
+      '@web-toybox/tangram':
+        specifier: workspace:*
+        version: link:../../packages/tangram
       '@web-toybox/tin-frog':
         specifier: workspace:*
         version: link:../../packages/tin-frog
@@ -36,6 +45,12 @@ importers:
   packages/jacobs-ladder: {}
 
   packages/kendama: {}
+
+  packages/peg-solitaire: {}
+
+  packages/sliding-puzzle: {}
+
+  packages/tangram: {}
 
   packages/tin-frog: {}
 

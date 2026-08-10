@@ -1,0 +1,19 @@
+{
+  "name": "@web-toybox/sliding-puzzle",
+  "version": "0.0.1",
+  "description": "A dependency-free fifteen sliding puzzle Web Component.",
+  "repository": {"type":"git","url":"git+https://github.com/bkmashiro/web-toybox.git","directory":"packages/sliding-puzzle"},
+  "homepage": "https://bkmashiro.github.io/web-toybox/toys/sliding-puzzle/",
+  "bugs": "https://github.com/bkmashiro/web-toybox/issues",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": true,
+  "files": ["dist","README.md","LICENSE"],
+  "main": "./dist/sliding-puzzle.umd.cjs",
+  "module": "./dist/sliding-puzzle.js",
+  "types": "./dist/index.d.ts",
+  "exports": {".": {"types":"./dist/index.d.ts","import":"./dist/sliding-puzzle.js","require":"./dist/sliding-puzzle.umd.cjs"}},
+  "dependencies": {},
+  "publishConfig": {"access":"public"},
+  "scripts": {"build":"vite build --config vite.config.js && tsc -p tsconfig.build.json"}
+}

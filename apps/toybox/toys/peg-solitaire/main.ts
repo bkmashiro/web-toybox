@@ -1,0 +1,10 @@
+import '../../src/toy-page.css';
+import { bindAudioControls } from '../../src/audio-controls';
+import { legalMoves, mountPegSolitaire, remainingPegs } from '@web-toybox/peg-solitaire';
+const toy = mountPegSolitaire(document.querySelector<HTMLElement>('#stage')!, { sound: true, volume: 0.75 });
+bindAudioControls({ target: toy, button: document.querySelector<HTMLButtonElement>('#sound-unlock')!, volume: document.querySelector<HTMLInputElement>('#volume')!, volumeOutput: document.querySelector<HTMLOutputElement>('#volume-output')! });
+document.querySelector<HTMLButtonElement>('#reset')!.addEventListener('click', toy.reset);
+const metric = document.querySelector<HTMLOutputElement>('#metric')!;
+const status = document.querySelector<HTMLOutputElement>('#status')!;
+setInterval(() => { metric.value = `${remainingPegs(toy.state)} 颗`; status.value = toy.state.finished ? '结束' : `${legalMoves(toy.state).length} 种跳法`; }, 120);
+(window as Window & { __pegSolitaire?: unknown }).__pegSolitaire = toy;

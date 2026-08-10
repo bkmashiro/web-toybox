@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { bindAudioControls } from '../src/audio-controls';
 
-type Listener = (event: { target?: unknown }) => void;
+type Listener = (event: { target?: unknown; isTrusted?: boolean }) => void;
 
 class FakeEventSource {
   readonly listeners = new Map<string, Set<Listener>>();
@@ -16,8 +16,8 @@ class FakeEventSource {
     this.listeners.get(type)?.delete(listener as Listener);
   }
 
-  emit(type: string, target: unknown = {}): void {
-    for (const listener of [...(this.listeners.get(type) ?? [])]) listener({ target });
+  emit(type: string, target: unknown = {}, isTrusted = true): void {
+    for (const listener of [...(this.listeners.get(type) ?? [])]) listener({ target, isTrusted });
   }
 
   count(): number {
@@ -59,6 +59,20 @@ function createTarget(results: boolean[]) {
 }
 
 describe('bindAudioControls', () => {
+  it('ignores synthetic interactions', async () => {
+    const events = new FakeEventSource();
+    const button = new FakeControl();
+    const volume = new FakeControl();
+    const output = new FakeControl();
+    const target = createTarget([true]);
+
+    bindAudioControls({ target, button, volume, volumeOutput: output, eventSource: events, userActivation: { hasBeenActive: false } });
+    events.emit('pointerdown', {}, false);
+    await settle();
+    expect(target.unlockCalls).toBe(0);
+    expect(target.playbackState).toBe('uninitialized');
+  });
+
   it('unlocks on the first ordinary trusted interaction and disarms after running', async () => {
     const events = new FakeEventSource();
     const button = new FakeControl();

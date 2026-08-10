@@ -1,0 +1,10 @@
+import '../../src/toy-page.css';
+import { bindAudioControls } from '../../src/audio-controls';
+import { mountSlidingPuzzle } from '@web-toybox/sliding-puzzle';
+const toy = mountSlidingPuzzle(document.querySelector<HTMLElement>('#stage')!, { sound: true, volume: 0.75 });
+bindAudioControls({ target: toy, button: document.querySelector<HTMLButtonElement>('#sound-unlock')!, volume: document.querySelector<HTMLInputElement>('#volume')!, volumeOutput: document.querySelector<HTMLOutputElement>('#volume-output')! });
+document.querySelector<HTMLButtonElement>('#reset')!.addEventListener('click', toy.reset);
+const metric = document.querySelector<HTMLOutputElement>('#metric')!;
+const status = document.querySelector<HTMLOutputElement>('#status')!;
+setInterval(() => { metric.value = String(toy.state.moves); status.value = toy.state.won ? '完成' : '未完成'; }, 120);
+(window as Window & { __slidingPuzzle?: unknown }).__slidingPuzzle = toy;

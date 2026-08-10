@@ -12,9 +12,12 @@
     "paths": {
       "@web-toybox/kendama": ["../../packages/kendama/src/index.ts"],
       "@web-toybox/jacobs-ladder": ["../../packages/jacobs-ladder/src/index.ts"],
+      "@web-toybox/peg-solitaire": ["../../packages/peg-solitaire/src/index.ts"],
+      "@web-toybox/sliding-puzzle": ["../../packages/sliding-puzzle/src/index.ts"],
+      "@web-toybox/tangram": ["../../packages/tangram/src/index.ts"],
       "@web-toybox/tin-frog": ["../../packages/tin-frog/src/index.ts"],
       "@web-toybox/yoyo": ["../../packages/yoyo/src/index.ts"]
     }
   },
-  "include": ["src", "toys/**/*.ts", "../../packages/kendama/src", "../../packages/jacobs-ladder/src", "../../packages/tin-frog/src", "../../packages/yoyo/src"]
+  "include": ["src", "toys/**/*.ts", "../../packages/kendama/src", "../../packages/jacobs-ladder/src", "../../packages/peg-solitaire/src", "../../packages/sliding-puzzle/src", "../../packages/tangram/src", "../../packages/tin-frog/src", "../../packages/yoyo/src"]
 }

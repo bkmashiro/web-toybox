@@ -1,6 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { KendamaVoice } from '../packages/kendama/src/audio';
 import { LadderVoice } from '../packages/jacobs-ladder/src/audio';
+import { PegVoice } from '../packages/peg-solitaire/src/audio';
+import { SlidingVoice } from '../packages/sliding-puzzle/src/audio';
+import { TangramVoice } from '../packages/tangram/src/audio';
 import { FrogVoice } from '../packages/tin-frog/src/audio';
 import { YoyoVoice } from '../packages/yoyo/src/audio';
 
@@ -78,6 +81,25 @@ describe('procedural voice volume', () => {
     await voice.unlock();
     const calls = FakeAudioContext.instances[0].calls;
     expect(calls.indexOf('resume')).toBeLessThan(calls.indexOf('oscillator'));
+  });
+
+  it('keeps new toy audio lazy until unlock and applies public volume', async () => {
+    const voices = [new TangramVoice(), new SlidingVoice(), new PegVoice()];
+    expect(FakeAudioContext.instances).toHaveLength(0);
+    for (const voice of voices) {
+      voice.setVolume(1);
+      await voice.unlock();
+      voice.click();
+    }
+    expect(FakeAudioContext.instances).toHaveLength(3);
+    expect(FakeAudioContext.instances.map((context) => context.gains[0].gain.assigned[0])).toEqual([0.16, 0.19, 0.18]);
+  });
+
+  it('reports unsupported audio without constructing a context', () => {
+    vi.stubGlobal('window', {});
+    expect([new TangramVoice(), new SlidingVoice(), new PegVoice()].map((voice) => voice.playbackState))
+      .toEqual(['unsupported', 'unsupported', 'unsupported']);
+    expect(FakeAudioContext.instances).toHaveLength(0);
   });
 
   it('applies a normalized maximum volume to every voice', async () => {

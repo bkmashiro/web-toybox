@@ -1,0 +1,10 @@
+import '../../src/toy-page.css';
+import { bindAudioControls } from '../../src/audio-controls';
+import { mountTangram } from '@web-toybox/tangram';
+const toy = mountTangram(document.querySelector<HTMLElement>('#stage')!, { sound: true, volume: 0.75 });
+bindAudioControls({ target: toy, button: document.querySelector<HTMLButtonElement>('#sound-unlock')!, volume: document.querySelector<HTMLInputElement>('#volume')!, volumeOutput: document.querySelector<HTMLOutputElement>('#volume-output')! });
+document.querySelector<HTMLButtonElement>('#reset')!.addEventListener('click', toy.reset);
+const metric = document.querySelector<HTMLOutputElement>('#metric')!;
+const status = document.querySelector<HTMLOutputElement>('#status')!;
+setInterval(() => { metric.value = `${toy.state.pieces.length} 块`; status.value = '自由拼图'; }, 160);
+(window as Window & { __tangram?: unknown }).__tangram = toy;

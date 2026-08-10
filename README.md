@@ -9,6 +9,9 @@ A lightweight collection of physics-driven browser toys, presented as a retro to
 - **悠悠球** — constrained string, disc spin, sleep, return, and procedural hum.
 - **翻板** — deterministic wooden-slat cascade that flips in both directions.
 - **铁皮青蛙** — wind-up spring, cam gait, ballistic hops, and tin/gear sound.
+- **七巧板** — polygon hit-testing, free drag, and 45-degree rotation.
+- **十五滑块** — legal-move shuffling that always preserves solvability.
+- **孔明棋** — exact orthogonal jump rules and move highlighting.
 
 ## Principles
 
@@ -16,7 +19,7 @@ A lightweight collection of physics-driven browser toys, presented as a retro to
 - one root pnpm toolchain for the whole monorepo;
 - browser-native Canvas, SVG, Pointer Events and Web Audio;
 - no toy bundle on the catalogue page;
-- lazy audio creation behind an explicit user gesture;
+- lazy audio creation after a trusted user gesture, with automatic unlock detection and a visible fallback;
 - independent ESM, UMD/CJS and TypeScript declaration output;
 - a 30 KB gzip JavaScript budget per toy package.
 
@@ -27,6 +30,9 @@ apps/toybox/            static catalogue and independent toy pages
 packages/kendama/       rigid-ball kendama
 packages/yoyo/          spinning yo-yo
 packages/jacobs-ladder/ reversible slat cascade
+packages/tangram/        seven-piece freeform puzzle
+packages/sliding-puzzle/ solvable fifteen puzzle
+packages/peg-solitaire/  single-player jump puzzle
 packages/tin-frog/      wind-up hopping frog
 scripts/                build, size, and release checks
 ```

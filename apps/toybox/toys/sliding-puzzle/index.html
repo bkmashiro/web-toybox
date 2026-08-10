@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E7%8E%A9%3C/text%3E%3C/svg%3E" />
+  <meta name="description" content="十五滑块网页小玩具。" />
+  <title>十五滑块 · 旧玩具箱</title>
+</head>
+<body>
+  <header class="toy-header"><a href="../../">← 回玩具箱</a><span>NO. 007 · FIFTEEN PUZZLE</span></header>
+  <main class="toy-layout">
+    <section class="toy-copy">
+      <p class="eyebrow">十五块 · 一个空位 · 可解洗牌</p>
+      <h1>挪开一格<br /><em>让数字回家。</em></h1>
+      <p class="lede">点击空位旁边的滑块，或使用方向键。洗牌只由合法移动组成，所以每一局都确实有路可走。</p>
+      <div class="controls">
+        <button id="sound-unlock" class="primary" type="button">点一下打开声音</button>
+        <button id="reset" type="button">重新洗牌</button>
+        <label class="volume-control" for="volume"><span>音量 <output id="volume-output">75%</output></span><input id="volume" type="range" min="0" max="100" step="5" value="75" aria-label="十五滑块音量" /></label>
+      </div>
+      <dl class="telemetry">
+        <div><dt>步数</dt><dd><output id="metric">0</output></dd></div>
+        <div><dt>状态</dt><dd><output id="status">未完成</output></dd></div>
+      </dl>
+      <code>npm i @web-toybox/sliding-puzzle</code>
+    </section>
+    <section class="stage-frame blue" aria-label="十五滑块试玩区"><div id="stage"></div></section>
+  </main>
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>

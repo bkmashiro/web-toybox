@@ -41,4 +41,22 @@ export const toys: ToyCard[] = [
     image: new URL('./cards/frog.svg', import.meta.url).href,
     href: './toys/tin-frog/', packageName: '@web-toybox/tin-frog · npm', status: '可玩',
   },
+  {
+    name: '七巧板', kana: 'TANGRAM', verb: '拼',
+    description: '七块多边形没有唯一答案，拖动、转向，慢慢拼出脑海里的轮廓。',
+    image: new URL('./cards/tangram.svg', import.meta.url).href,
+    href: './toys/tangram/', packageName: '@web-toybox/tangram · preview', status: '可玩',
+  },
+  {
+    name: '十五滑块', kana: 'FIFTEEN PUZZLE', verb: '挪',
+    description: '十五块木牌和一个空位；每次只挪一步，把乱序慢慢送回原位。',
+    image: new URL('./cards/sliding-puzzle.svg', import.meta.url).href,
+    href: './toys/sliding-puzzle/', packageName: '@web-toybox/sliding-puzzle · preview', status: '可玩',
+  },
+  {
+    name: '孔明棋', kana: 'PEG SOLITAIRE', verb: '跳',
+    description: '跨过一颗，拿走一颗。在木盘上把三十二颗棋子收束到最后一颗。',
+    image: new URL('./cards/peg-solitaire.svg', import.meta.url).href,
+    href: './toys/peg-solitaire/', packageName: '@web-toybox/peg-solitaire · preview', status: '可玩',
+  },
 ];

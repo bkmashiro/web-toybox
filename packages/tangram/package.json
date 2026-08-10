@@ -1,0 +1,19 @@
+{
+  "name": "@web-toybox/tangram",
+  "version": "0.0.1",
+  "description": "A dependency-free tangram Web Component.",
+  "repository": {"type":"git","url":"git+https://github.com/bkmashiro/web-toybox.git","directory":"packages/tangram"},
+  "homepage": "https://bkmashiro.github.io/web-toybox/toys/tangram/",
+  "bugs": "https://github.com/bkmashiro/web-toybox/issues",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": true,
+  "files": ["dist","README.md","LICENSE"],
+  "main": "./dist/tangram.umd.cjs",
+  "module": "./dist/tangram.js",
+  "types": "./dist/index.d.ts",
+  "exports": {".": {"types":"./dist/index.d.ts","import":"./dist/tangram.js","require":"./dist/tangram.umd.cjs"}},
+  "dependencies": {},
+  "publishConfig": {"access":"public"},
+  "scripts": {"build":"vite build --config vite.config.js && tsc -p tsconfig.build.json"}
+}

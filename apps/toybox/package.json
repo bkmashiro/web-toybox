@@ -6,6 +6,9 @@
   "dependencies": {
     "@web-toybox/kendama": "workspace:*",
     "@web-toybox/jacobs-ladder": "workspace:*",
+    "@web-toybox/peg-solitaire": "workspace:*",
+    "@web-toybox/sliding-puzzle": "workspace:*",
+    "@web-toybox/tangram": "workspace:*",
     "@web-toybox/tin-frog": "workspace:*",
     "@web-toybox/yoyo": "workspace:*"
   }
