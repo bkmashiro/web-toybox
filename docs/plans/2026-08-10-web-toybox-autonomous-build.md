@@ -85,10 +85,10 @@ For each package also run tarball ESM/CJS consumer smoke and SSR import. For UI 
 
 ### Track B — Yo-yo
 
-- [ ] Write deterministic physics tests for string limit, spin energy, sleep/return, and bounds.
-- [ ] Implement package, Web Component, procedural sound, API, and SSR-safe import.
-- [ ] Add detail page and activate catalogue card.
-- [ ] Browser/touch QA, package smokes, gates, signed local commit.
+- [x] Write deterministic physics tests for string limit, spin energy, sleep/return, and bounds.
+- [x] Implement package, Web Component, procedural sound, API, and SSR-safe import.
+- [x] Add detail page and activate catalogue card.
+- [x] Browser/touch QA, package smokes, gates, signed local commit.
 
 ### Track C — Jacob’s ladder
 
@@ -132,6 +132,7 @@ Continue automatically after each verified slice. Stop only when all executable 
 
 - 2026-08-10: Roadmap created from live repository state. No implementation item marked complete yet.
 - 2026-08-10: Kendama hard mode implemented. Nine tests pass; hard mode uses rotating ball state, hole-attached rope torque, release grace, narrow cup mouths/rim response, and angle/speed-gated spike insertion. Mobile touch QA confirmed angular motion, no immediate recatch, mode switching, zero overflow, and zero page errors.
+- 2026-08-10: Yo-yo package and page implemented. Four deterministic physics tests cover string limits, throw-to-spin transfer, sleep, and return. Mobile touch QA raised spin from 8 to 29.6 rad/s and shortened the returning string from 250 to 152 px. ESM/CJS tarball consumers, SSR import, size gate (3.70 KiB gzip), zero-overflow, and zero-error checks passed.
 
 ## Owner-attended blockers
 

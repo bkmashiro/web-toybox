@@ -23,8 +23,13 @@ importers:
       '@web-toybox/kendama':
         specifier: workspace:*
         version: link:../../packages/kendama
+      '@web-toybox/yoyo':
+        specifier: workspace:*
+        version: link:../../packages/yoyo
 
   packages/kendama: {}
+
+  packages/yoyo: {}
 
 packages:
 

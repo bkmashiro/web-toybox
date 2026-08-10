@@ -1,0 +1,19 @@
+{
+  "name": "@web-toybox/yoyo",
+  "version": "0.0.1",
+  "description": "A dependency-free, physics-driven yo-yo Web Component.",
+  "repository": { "type": "git", "url": "git+https://github.com/bkmashiro/web-toybox.git", "directory": "packages/yoyo" },
+  "homepage": "https://bkmashiro.github.io/web-toybox/toys/yoyo/",
+  "bugs": "https://github.com/bkmashiro/web-toybox/issues",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": true,
+  "files": ["dist", "README.md", "LICENSE"],
+  "main": "./dist/yoyo.umd.cjs",
+  "module": "./dist/yoyo.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/yoyo.js", "require": "./dist/yoyo.umd.cjs" } },
+  "dependencies": {},
+  "publishConfig": { "access": "public" },
+  "scripts": { "build": "vite build --config vite.config.js && tsc -p tsconfig.build.json" }
+}

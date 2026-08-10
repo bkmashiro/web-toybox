@@ -3,7 +3,11 @@ import { readdir, readFile, stat } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 
 const root = new URL('..', import.meta.url).pathname;
-const targets = ['packages/kendama/dist', 'site'];
+const packageEntries = await readdir(join(root, 'packages'), { withFileTypes: true });
+const targets = [
+  ...packageEntries.filter((entry) => entry.isDirectory()).map((entry) => `packages/${entry.name}/dist`),
+  'site',
+];
 let failed = false;
 for (const target of targets) {
   const directory = join(root, target);
@@ -16,7 +20,7 @@ for (const target of targets) {
         const content = await readFile(file);
         const gzip = gzipSync(content).byteLength;
         console.log(`${relative(root, file)}\t${content.byteLength} bytes\t${gzip} gzip`);
-        if (target.includes('kendama') && name.endsWith('.js') && gzip > 30 * 1024) failed = true;
+        if (target.startsWith('packages/') && name.endsWith('.js') && gzip > 30 * 1024) failed = true;
       }
     }
   };

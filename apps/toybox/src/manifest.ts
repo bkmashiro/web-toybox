@@ -26,7 +26,8 @@ export const toys: ToyCard[] = [
   {
     name: '悠悠球', kana: 'YO-YO', verb: '放',
     description: '放线、睡眠、回收，让转速沿着一根线慢慢唱出来。',
-    image: new URL('./cards/yoyo.svg', import.meta.url).href, status: '制作中',
+    image: new URL('./cards/yoyo.svg', import.meta.url).href,
+    href: './toys/yoyo/', packageName: '@web-toybox/yoyo · preview', status: '可玩',
   },
   {
     name: '翻板', kana: "JACOB'S LADDER", verb: '翻',

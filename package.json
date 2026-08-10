@@ -8,9 +8,9 @@
     "dev": "vite --config apps/toybox/vite.config.js",
     "test": "vitest run",
     "typecheck": "tsc -b",
-    "build:kendama": "vite build --config packages/kendama/vite.config.js && tsc -p packages/kendama/tsconfig.build.json",
+    "build:packages": "pnpm --filter './packages/*' --workspace-concurrency=1 run build",
     "build:site": "vite build --config apps/toybox/vite.config.js",
-    "build": "pnpm build:kendama && pnpm build:site",
+    "build": "pnpm build:packages && pnpm build:site",
     "size": "node scripts/size-check.mjs",
     "clean": "node scripts/clean.mjs"
   },
@@ -21,5 +21,16 @@
   },
   "description": "A lightweight collection of physics-driven browser toys, presented as a retro toy catalogue.",
   "main": "index.js",
-  "keywords": []
+  "keywords": [],
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bkmashiro/web-toybox.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bkmashiro/web-toybox/issues"
+  },
+  "homepage": "https://github.com/bkmashiro/web-toybox#readme"
 }

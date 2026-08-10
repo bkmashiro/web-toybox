@@ -9,6 +9,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@web-toybox/kendama': resolve(root, '../../packages/kendama/src/index.ts'),
+      '@web-toybox/yoyo': resolve(root, '../../packages/yoyo/src/index.ts'),
     },
   },
   build: {
@@ -18,6 +19,7 @@ export default defineConfig({
       input: {
         index: resolve(root, 'index.html'),
         'toys/kendama/index': resolve(root, 'toys/kendama/index.html'),
+        'toys/yoyo/index': resolve(root, 'toys/yoyo/index.html'),
       },
     },
   },

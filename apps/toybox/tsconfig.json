@@ -10,8 +10,9 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@web-toybox/kendama": ["../../packages/kendama/src/index.ts"]
+      "@web-toybox/kendama": ["../../packages/kendama/src/index.ts"],
+      "@web-toybox/yoyo": ["../../packages/yoyo/src/index.ts"]
     }
   },
-  "include": ["src", "toys/**/*.ts", "../../packages/kendama/src"]
+  "include": ["src", "toys/**/*.ts", "../../packages/kendama/src", "../../packages/yoyo/src"]
 }
