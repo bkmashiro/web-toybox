@@ -126,16 +126,6 @@ function signalImpact(state: KendamaState, speed: number, kind: KendamaState['im
 }
 
 function caughtPose(state: KendamaState, geometry: KendamaGeometry): { position: Vec2; angle?: number } | undefined {
-  const seat = state.ballRadius * 0.82;
-  if (state.caught === 'big-cup') return {
-    position: { x: geometry.bigCup.x + geometry.upperCupAxis.x * seat, y: geometry.bigCup.y + geometry.upperCupAxis.y * seat },
-  };
-  if (state.caught === 'small-cup') return {
-    position: { x: geometry.smallCup.x + geometry.upperCupAxis.x * seat, y: geometry.smallCup.y + geometry.upperCupAxis.y * seat },
-  };
-  if (state.caught === 'base-cup') return {
-    position: { x: geometry.baseCup.x + geometry.baseCupAxis.x * seat, y: geometry.baseCup.y + geometry.baseCupAxis.y * seat },
-  };
   if (state.caught === 'spike') return {
     position: {
       x: geometry.spike.x + geometry.spikeAxis.x * state.ballRadius * 0.72,
@@ -153,25 +143,11 @@ interface CupCandidate {
   radius: number;
 }
 
-function hardCupContact(state: KendamaState, candidate: CupCandidate): boolean {
+function resolveCupContact(state: KendamaState, candidate: CupCandidate): boolean {
   const relative = { x: state.ball.x - candidate.point.x, y: state.ball.y - candidate.point.y };
   const tangent = { x: -candidate.axis.y, y: candidate.axis.x };
   const axial = dot(relative, candidate.axis);
   const lateral = dot(relative, tangent);
-  const mouthHalfWidth = Math.max(3, candidate.radius - state.ballRadius * 0.82);
-  const relativeVelocity = {
-    x: state.ball.vx - state.handle.vx,
-    y: state.ball.vy - state.handle.vy,
-  };
-  const approach = -dot(relativeVelocity, candidate.axis);
-  const centered = Math.abs(lateral) <= mouthHalfWidth;
-  const atSeat = axial >= state.ballRadius * 0.7 && axial <= state.ballRadius * 1.12;
-  const catchableSpeed = approach > 0 && approach < 520 && Math.abs(dot(relativeVelocity, tangent)) < 360;
-  if (centered && atSeat && catchableSpeed) {
-    state.caught = candidate.kind;
-    signalImpact(state, Math.hypot(relativeVelocity.x, relativeVelocity.y), candidate.kind);
-    return true;
-  }
 
   for (const side of [-1, 1]) {
     const rim = {
@@ -188,14 +164,57 @@ function hardCupContact(state: KendamaState, candidate: CupCandidate): boolean {
     state.ball.y += normal.y * penetration;
     const incoming = (state.ball.vx - state.handle.vx) * normal.x + (state.ball.vy - state.handle.vy) * normal.y;
     if (incoming < 0) {
-      state.ball.vx -= incoming * normal.x * 1.42;
-      state.ball.vy -= incoming * normal.y * 1.42;
+      state.ball.vx -= incoming * normal.x * 1.34;
+      state.ball.vy -= incoming * normal.y * 1.34;
       state.ball.angularVelocity += side * incoming * 0.025;
       signalImpact(state, Math.abs(incoming), candidate.kind);
     }
-    return false;
+    return true;
   }
-  return false;
+
+  const mouthHalfWidth = Math.max(4, candidate.radius - state.ballRadius * 0.72);
+  const normalizedLateral = lateral / mouthHalfWidth;
+  if (Math.abs(normalizedLateral) > 1) return false;
+
+  const seatHeight = state.ballRadius * 0.78;
+  const bowlRise = state.ballRadius * 0.36 * normalizedLateral * normalizedLateral;
+  const surfaceHeight = seatHeight + bowlRise;
+  if (axial < -state.ballRadius * 0.25 || axial >= surfaceHeight) return false;
+
+  const slope = 2 * state.ballRadius * 0.36 * normalizedLateral / mouthHalfWidth;
+  const rawNormal = {
+    x: candidate.axis.x - tangent.x * slope,
+    y: candidate.axis.y - tangent.y * slope,
+  };
+  const normalLength = Math.hypot(rawNormal.x, rawNormal.y) || 1;
+  const normal = { x: rawNormal.x / normalLength, y: rawNormal.y / normalLength };
+  const correction = (surfaceHeight - axial) / Math.max(0.45, dot(normal, candidate.axis));
+  state.ball.x += normal.x * correction;
+  state.ball.y += normal.y * correction;
+
+  const relativeVelocity = {
+    x: state.ball.vx - state.handle.vx,
+    y: state.ball.vy - state.handle.vy,
+  };
+  const incoming = dot(relativeVelocity, normal);
+  if (incoming < 0) {
+    const restitution = state.mode === 'hard' ? 0.06 : 0.11;
+    const impulse = -(1 + restitution) * incoming;
+    state.ball.vx += normal.x * impulse;
+    state.ball.vy += normal.y * impulse;
+    signalImpact(state, Math.abs(incoming), candidate.kind);
+  }
+
+  const surfaceTangent = { x: -normal.y, y: normal.x };
+  const slip = (state.ball.vx - state.handle.vx) * surfaceTangent.x
+    + (state.ball.vy - state.handle.vy) * surfaceTangent.y;
+  const friction = state.mode === 'hard' ? 0.08 : 0.16;
+  state.ball.vx -= surfaceTangent.x * slip * friction;
+  state.ball.vy -= surfaceTangent.y * slip * friction;
+  state.ball.angularVelocity += slip / Math.max(1, state.ballRadius) * 0.04;
+
+  if (state.releaseGrace <= 0 && Math.abs(normalizedLateral) < 0.88) state.caught = candidate.kind;
+  return true;
 }
 
 function hardSpikeContact(state: KendamaState, geometry: KendamaGeometry): boolean {
@@ -224,35 +243,21 @@ function hardSpikeContact(state: KendamaState, geometry: KendamaGeometry): boole
   return false;
 }
 
-function tryCatch(state: KendamaState, geometry: KendamaGeometry): void {
-  if (state.caught !== 'none' || state.releaseGrace > 0) return;
+function resolveContacts(state: KendamaState, geometry: KendamaGeometry): void {
+  const margin = state.mode === 'hard' ? 0 : 3;
+  const candidates: CupCandidate[] = [
+    { kind: 'big-cup', point: geometry.bigCup, axis: geometry.upperCupAxis, radius: 30 + margin },
+    { kind: 'small-cup', point: geometry.smallCup, axis: geometry.upperCupAxis, radius: 24 + margin },
+    { kind: 'base-cup', point: geometry.baseCup, axis: geometry.baseCupAxis, radius: 22 + margin },
+  ];
+  for (const candidate of candidates) resolveCupContact(state, candidate);
+
+  if (state.releaseGrace > 0) return;
   if (state.mode === 'hard') {
-    const candidates: CupCandidate[] = [
-      { kind: 'big-cup', point: geometry.bigCup, axis: geometry.upperCupAxis, radius: 30 },
-      { kind: 'small-cup', point: geometry.smallCup, axis: geometry.upperCupAxis, radius: 24 },
-      { kind: 'base-cup', point: geometry.baseCup, axis: geometry.baseCupAxis, radius: 22 },
-    ];
-    for (const candidate of candidates) {
-      if (hardCupContact(state, candidate)) return;
-    }
     hardSpikeContact(state, geometry);
     return;
   }
 
-  if (state.ball.vy < 0) return;
-  const candidates: Array<{ kind: KendamaCatch; point: Vec2; radius: number }> = [
-    { kind: 'big-cup', point: geometry.bigCup, radius: 30 },
-    { kind: 'small-cup', point: geometry.smallCup, radius: 24 },
-    { kind: 'base-cup', point: geometry.baseCup, radius: 22 },
-  ];
-  for (const candidate of candidates) {
-    const distance = Math.hypot(state.ball.x - candidate.point.x, state.ball.y - candidate.point.y);
-    if (distance <= state.ballRadius + candidate.radius && state.ball.y <= candidate.point.y + 4) {
-      state.caught = candidate.kind;
-      signalImpact(state, Math.hypot(state.ball.vx, state.ball.vy), candidate.kind);
-      return;
-    }
-  }
   const spikeDistance = Math.hypot(state.ball.x - geometry.spike.x, state.ball.y - geometry.spike.y);
   if (spikeDistance < state.ballRadius * 0.48 && Math.hypot(state.ball.vx, state.ball.vy) < 560) {
     state.caught = 'spike';
@@ -262,10 +267,23 @@ function tryCatch(state: KendamaState, geometry: KendamaGeometry): void {
 
 export function releaseKendama(state: KendamaState): void {
   if (state.caught === 'none') return;
+  const geometry = getKendamaGeometry(state);
+  const tangent = { x: -geometry.upperCupAxis.y, y: geometry.upperCupAxis.x };
+  const rawReleaseAxis = state.caught === 'big-cup'
+    ? { x: -tangent.x + geometry.upperCupAxis.x * 0.9, y: -tangent.y + geometry.upperCupAxis.y * 0.9 }
+    : state.caught === 'small-cup'
+      ? { x: tangent.x + geometry.upperCupAxis.x * 0.9, y: tangent.y + geometry.upperCupAxis.y * 0.9 }
+      : state.caught === 'base-cup'
+        ? geometry.baseCupAxis
+        : geometry.spikeAxis;
+  const releaseLength = Math.hypot(rawReleaseAxis.x, rawReleaseAxis.y) || 1;
+  const releaseAxis = { x: rawReleaseAxis.x / releaseLength, y: rawReleaseAxis.y / releaseLength };
   state.caught = 'none';
-  state.releaseGrace = state.mode === 'hard' ? 0.24 : 0.12;
-  state.ball.vx += state.handle.vx * 0.7;
-  state.ball.vy -= 110 + Math.abs(state.handle.vy) * 0.25;
+  state.releaseGrace = state.mode === 'hard' ? 0.24 : 0.16;
+  state.ball.x += releaseAxis.x * 6;
+  state.ball.y += releaseAxis.y * 6;
+  state.ball.vx += releaseAxis.x * 280 + state.handle.vx * 0.25;
+  state.ball.vy += releaseAxis.y * 280 + state.handle.vy * 0.25;
   state.ball.angularVelocity += state.handle.vx * 0.015;
 }
 
@@ -325,6 +343,7 @@ export function stepKendama(
   const width = Math.max(1, bounds.width);
   const height = Math.max(1, bounds.height);
   state.releaseGrace = Math.max(0, state.releaseGrace - step);
+  if (state.caught !== 'spike') state.caught = 'none';
 
   if (input.held && Number.isFinite(input.x) && Number.isFinite(input.y)) {
     const ax = (input.x - state.handle.x) * 105 - state.handle.vx * 17;
@@ -379,5 +398,5 @@ export function stepKendama(
     state.ball.angularVelocity -= state.ball.vx * 0.008;
   }
 
-  tryCatch(state, geometry);
+  resolveContacts(state, geometry);
 }

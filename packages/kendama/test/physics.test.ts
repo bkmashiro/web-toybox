@@ -40,9 +40,13 @@ describe('kendama physics', () => {
     state.ball.vx = 5;
     state.ball.vy = 90;
 
-    stepKendama(state, { held: false, x: 0, y: 0 }, 1 / 120, { width: 800, height: 700 });
+    let supported = false;
+    for (let index = 0; index < 20; index += 1) {
+      stepKendama(state, { held: false, x: 0, y: 0 }, 1 / 120, { width: 800, height: 700 });
+      supported ||= state.caught === 'big-cup';
+    }
 
-    expect(state.caught).toBe('big-cup');
+    expect(supported).toBe(true);
   });
 
   it('keeps the ball visible after repeated viewport collisions', () => {
@@ -94,6 +98,61 @@ describe('kendama physics', () => {
     expect(state.releaseGrace).toBeGreaterThan(0);
   });
 
+  it('does not pin a cup-supported ball to the handle velocity', () => {
+    const state = createKendamaState(800, 700, 'hard');
+    const geometry = getKendamaGeometry(state);
+    state.caught = 'big-cup';
+    state.ball.x = geometry.bigCup.x + geometry.upperCupAxis.x * state.ballRadius * 0.82;
+    state.ball.y = geometry.bigCup.y + geometry.upperCupAxis.y * state.ballRadius * 0.82;
+    state.ball.vx = -45;
+    state.ball.vy = 20;
+    state.handle.vx = 160;
+
+    stepKendama(state, { held: false, x: 0, y: 0 }, 1 / 120, { width: 800, height: 700 });
+
+    expect(state.ball.vx).not.toBeCloseTo(state.handle.vx, 6);
+    expect(state.ball.vy).not.toBeCloseTo(state.handle.vy, 6);
+  });
+
+  it('lets a seated ball leave when the cup is swept sideways', () => {
+    const state = createKendamaState(800, 700, 'hard');
+    const initial = getKendamaGeometry(state);
+    state.caught = 'big-cup';
+    state.ball.x = initial.bigCup.x + initial.upperCupAxis.x * state.ballRadius * 0.82;
+    state.ball.y = initial.bigCup.y + initial.upperCupAxis.y * state.ballRadius * 0.82;
+
+    for (let index = 0; index < 36; index += 1) {
+      stepKendama(
+        state,
+        { held: true, x: state.handle.x + 260, y: state.handle.y },
+        1 / 120,
+        { width: 800, height: 700 },
+      );
+    }
+
+    const cup = getKendamaGeometry(state).bigCup;
+    expect(state.caught).toBe('none');
+    expect(Math.hypot(state.ball.x - cup.x, state.ball.y - cup.y)).toBeGreaterThan(state.ballRadius * 1.2);
+  });
+
+  it('keeps a released cup ball free through the cooldown window', () => {
+    const state = createKendamaState(800, 700, 'hard');
+    const geometry = getKendamaGeometry(state);
+    state.caught = 'big-cup';
+    state.ball.x = geometry.bigCup.x + geometry.upperCupAxis.x * state.ballRadius * 0.82;
+    state.ball.y = geometry.bigCup.y + geometry.upperCupAxis.y * state.ballRadius * 0.82;
+    releaseKendama(state);
+
+    let recaughtEarly = false;
+    for (let index = 0; index < 36; index += 1) {
+      stepKendama(state, { held: false, x: 0, y: 0 }, 1 / 120, { width: 800, height: 700 });
+      recaughtEarly ||= state.caught === 'big-cup';
+    }
+
+    expect(state.releaseGrace).toBe(0);
+    expect(recaughtEarly).toBe(false);
+  });
+
   it('requires the ball center to enter the narrow hard-mode cup mouth', () => {
     const centered = createKendamaState(800, 700, 'hard');
     const bigCup = getKendamaGeometry(centered).bigCup;
@@ -101,8 +160,12 @@ describe('kendama physics', () => {
     centered.ball.y = bigCup.y - centered.ballRadius - 1;
     centered.ball.vx = 0;
     centered.ball.vy = 85;
-    stepKendama(centered, { held: false, x: 0, y: 0 }, 1 / 120, { width: 800, height: 700 });
-    expect(centered.caught).toBe('big-cup');
+    let centeredContact = false;
+    for (let index = 0; index < 20; index += 1) {
+      stepKendama(centered, { held: false, x: 0, y: 0 }, 1 / 120, { width: 800, height: 700 });
+      centeredContact ||= centered.caught === 'big-cup';
+    }
+    expect(centeredContact).toBe(true);
 
     const rimHit = createKendamaState(800, 700, 'hard');
     const rimCup = getKendamaGeometry(rimHit).bigCup;
@@ -110,8 +173,12 @@ describe('kendama physics', () => {
     rimHit.ball.y = rimCup.y - rimHit.ballRadius - 1;
     rimHit.ball.vx = 0;
     rimHit.ball.vy = 85;
-    stepKendama(rimHit, { held: false, x: 0, y: 0 }, 1 / 120, { width: 800, height: 700 });
-    expect(rimHit.caught).toBe('none');
+    let rimWasCaught = false;
+    for (let index = 0; index < 20; index += 1) {
+      stepKendama(rimHit, { held: false, x: 0, y: 0 }, 1 / 120, { width: 800, height: 700 });
+      rimWasCaught ||= rimHit.caught === 'big-cup';
+    }
+    expect(rimWasCaught).toBe(false);
   });
 
   it('only inserts the spike when the ball hole points at the tip', () => {
