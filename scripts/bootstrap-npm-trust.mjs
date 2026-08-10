@@ -55,7 +55,7 @@ export function bootstrapCommands(pkg, includePublish = true) {
   const commands = [];
   if (includePublish) commands.push({
       command: 'npm',
-      args: ['publish', '--access', 'public'],
+      args: ['publish', '--access', 'public', '--provenance=false'],
       cwd: pkg.directory,
     });
   commands.push({

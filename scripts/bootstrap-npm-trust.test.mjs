@@ -11,7 +11,7 @@ describe('npm trust bootstrap', () => {
     expect(commands).toEqual([
       {
         command: 'npm',
-        args: ['publish', '--access', 'public'],
+        args: ['publish', '--access', 'public', '--provenance=false'],
         cwd: '/tmp/new-toy',
       },
       {
