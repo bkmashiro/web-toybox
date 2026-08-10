@@ -1,1 +1,37 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E7%8E%A9%3C/text%3E%3C/svg%3E"/><meta name="description" content="木片依次翻落的网页翻板玩具。"/><title>翻板 · 旧玩具箱</title></head><body><header class="toy-header"><a href="../../">← 回到旧玩具箱</a><span>CATALOGUE № 003</span></header><main class="toy-layout"><section class="toy-copy"><span class="label">木片接力</span><h1>翻板</h1><p class="roman">JACOB'S LADDER</p><p class="lede">点一下，木片会一片接一片翻到底。再点一次，它会沿同一条路翻回来。</p><div class="controls"><button id="sound-unlock">点一下打开木片声</button><button id="flip">翻一次</button><button id="reset">摆正</button></div><dl class="telemetry"><div><dt>状态</dt><dd id="phase">待翻</dd></div><div><dt>落下</dt><dd id="count">0 / 8</dd></div></dl><code>npm i @web-toybox/jacobs-ladder</code></section><section class="stage-frame amber" id="stage"></section></main><script type="module" src="./main.ts"></script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E7%8E%A9%3C/text%3E%3C/svg%3E" />
+  <meta name="description" content="木片依次翻落的网页翻板玩具。" />
+  <title>翻板 · 旧玩具箱</title>
+</head>
+<body>
+  <header class="toy-header"><a href="../../">← 回到旧玩具箱</a><span>CATALOGUE № 003</span></header>
+  <main class="toy-layout">
+    <section class="toy-copy">
+      <span class="label">木片接力</span>
+      <h1>翻板</h1>
+      <p class="roman">JACOB'S LADDER</p>
+      <p class="lede">点一下，木片会一片接一片翻到底。再点一次，它会沿同一条路翻回来。</p>
+      <div class="controls">
+        <button id="sound-unlock" class="primary" type="button">点一下打开声音</button>
+        <button id="flip" type="button">翻一次</button>
+        <button id="reset" type="button">摆正</button>
+        <label class="volume-control" for="volume">
+          <span>音量 <output id="volume-output">75%</output></span>
+          <input id="volume" type="range" min="0" max="100" step="5" value="75" aria-label="木片声音量" />
+        </label>
+      </div>
+      <dl class="telemetry">
+        <div><dt>状态</dt><dd id="phase">待翻</dd></div>
+        <div><dt>落下</dt><dd id="count">0 / 8</dd></div>
+      </dl>
+      <code>npm i @web-toybox/jacobs-ladder</code>
+    </section>
+    <section class="stage-frame amber" id="stage"></section>
+  </main>
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>

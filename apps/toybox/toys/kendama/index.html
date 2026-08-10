@@ -18,10 +18,14 @@
       <h1>把球<br /><em>接回来。</em></h1>
       <p class="lede">拖住剑身快速画圈，再放慢手腕，让木球落进大皿或小皿。困难模式里，绳子拴在会旋转的球洞上；想入玉，位置、速度和洞口角度都要对。</p>
       <div class="controls">
-        <button id="sound-unlock" class="primary" type="button">点一下打开木头声</button>
+        <button id="sound-unlock" class="primary" type="button">点一下打开声音</button>
         <button id="release" type="button">放球</button>
         <button id="mode" type="button" aria-pressed="true">困难模式：开</button>
         <button id="reset" type="button">重新来</button>
+        <label class="volume-control" for="volume">
+          <span>音量 <output id="volume-output">75%</output></span>
+          <input id="volume" type="range" min="0" max="100" step="5" value="75" aria-label="木头声音量" />
+        </label>
       </div>
       <dl class="telemetry">
         <div><dt>现在</dt><dd><output id="catch-state">还在空中</output></dd></div>

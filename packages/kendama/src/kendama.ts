@@ -16,6 +16,7 @@ const HTMLElementBase = (typeof HTMLElement === 'undefined' ? class {} : HTMLEle
 
 export interface KendamaOptions {
   sound?: boolean;
+  volume?: number;
   ropeLength?: number;
   mode?: KendamaMode;
 }
@@ -67,6 +68,7 @@ export class RetroKendamaElement extends HTMLElementBase {
 
   configure(options: KendamaOptions): void {
     if (typeof options.sound === 'boolean') this.soundEnabled = options.sound;
+    if (Number.isFinite(options.volume)) this.setVolume(options.volume!);
     if (Number.isFinite(options.ropeLength)) this.stateValue.ropeLength = Math.min(260, Math.max(90, options.ropeLength!));
     if (options.mode && options.mode !== this.stateValue.mode) this.setMode(options.mode);
   }
@@ -82,6 +84,10 @@ export class RetroKendamaElement extends HTMLElementBase {
   async unlockSound(): Promise<boolean> {
     if (!this.soundEnabled) return false;
     return this.voice.unlock();
+  }
+
+  setVolume(value: number): void {
+    this.voice.setVolume(value);
   }
 
   reset = (): void => {

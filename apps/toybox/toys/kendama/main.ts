@@ -1,8 +1,11 @@
 import '../../src/toy-page.css';
+import { bindAudioControls } from '../../src/audio-controls';
 import { mountKendama } from '@web-toybox/kendama';
 
 const stage = document.querySelector<HTMLElement>('#stage')!;
 const soundButton = document.querySelector<HTMLButtonElement>('#sound-unlock')!;
+const volume = document.querySelector<HTMLInputElement>('#volume')!;
+const volumeOutput = document.querySelector<HTMLOutputElement>('#volume-output')!;
 const resetButton = document.querySelector<HTMLButtonElement>('#reset')!;
 const releaseButton = document.querySelector<HTMLButtonElement>('#release')!;
 const modeButton = document.querySelector<HTMLButtonElement>('#mode')!;
@@ -10,14 +13,9 @@ const catchOutput = document.querySelector<HTMLOutputElement>('#catch-state')!;
 const speedOutput = document.querySelector<HTMLOutputElement>('#ball-speed')!;
 const holeOutput = document.querySelector<HTMLOutputElement>('#hole-angle')!;
 
-const kendama = mountKendama(stage, { sound: true, mode: 'hard' });
+const kendama = mountKendama(stage, { sound: true, volume: 0.75, mode: 'hard' });
+bindAudioControls({ target: kendama, button: soundButton, volume, volumeOutput });
 
-soundButton.addEventListener('click', async () => {
-  soundButton.textContent = '正在打开…';
-  const running = await kendama.unlockSound();
-  if (running) soundButton.hidden = true;
-  else soundButton.textContent = '再点一下打开声音';
-});
 resetButton.addEventListener('click', kendama.reset);
 releaseButton.addEventListener('click', kendama.release);
 modeButton.addEventListener('click', () => {

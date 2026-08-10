@@ -21,24 +21,24 @@ export const toys: ToyCard[] = [
     name: '剑玉', kana: 'KENDAMA', verb: '接',
     description: '木球、棉线和三个皿。拖住剑身，把球送回杯口。',
     image: new URL('./cards/kendama.svg', import.meta.url).href,
-    href: './toys/kendama/', packageName: '@web-toybox/kendama · npm 0.0.1', status: '可玩',
+    href: './toys/kendama/', packageName: '@web-toybox/kendama · npm', status: '可玩',
   },
   {
     name: '悠悠球', kana: 'YO-YO', verb: '放',
     description: '放线、睡眠、回收，让转速沿着一根线慢慢唱出来。',
     image: new URL('./cards/yoyo.svg', import.meta.url).href,
-    href: './toys/yoyo/', packageName: '@web-toybox/yoyo · npm 0.0.1', status: '可玩',
+    href: './toys/yoyo/', packageName: '@web-toybox/yoyo · npm', status: '可玩',
   },
   {
     name: '翻板', kana: "JACOB'S LADDER", verb: '翻',
     description: '一串木片接力落下，像一小段不会结束的瀑布。',
     image: new URL('./cards/ladder.svg', import.meta.url).href,
-    href: './toys/jacobs-ladder/', packageName: '@web-toybox/jacobs-ladder · npm 0.0.1', status: '可玩',
+    href: './toys/jacobs-ladder/', packageName: '@web-toybox/jacobs-ladder · npm', status: '可玩',
   },
   {
     name: '铁皮青蛙', kana: 'TIN FROG', verb: '拧',
     description: '上紧发条，看薄铁皮和小齿轮把青蛙一步步送出去。',
     image: new URL('./cards/frog.svg', import.meta.url).href,
-    href: './toys/tin-frog/', packageName: '@web-toybox/tin-frog · npm 0.0.1', status: '可玩',
+    href: './toys/tin-frog/', packageName: '@web-toybox/tin-frog · npm', status: '可玩',
   },
 ];

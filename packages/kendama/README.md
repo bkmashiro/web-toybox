@@ -5,9 +5,18 @@ A dependency-free, physics-driven kendama for the browser.
 ```ts
 import { mountKendama } from '@web-toybox/kendama';
 
-const kendama = mountKendama(document.body, { mode: 'hard' });
-await kendama.unlockSound(); // call from an explicit user gesture
+const kendama = mountKendama(document.body, {
+  mode: 'hard',
+  volume: 0.75,
+});
+
+soundButton.addEventListener('click', () => kendama.unlockSound());
+volumeInput.addEventListener('input', () => {
+  kendama.setVolume(Number(volumeInput.value) / 100);
+});
 ```
+
+`volume` and `setVolume()` accept a normalized value from `0` to `1`. Web Audio remains lazy: call `unlockSound()` from a trusted user interaction. No `AudioContext` is created during import or construction.
 
 Or use the registered Web Component:
 

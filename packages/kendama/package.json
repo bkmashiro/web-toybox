@@ -1,6 +1,6 @@
 {
   "name": "@web-toybox/kendama",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A dependency-free, physics-driven kendama Web Component.",
   "repository": {
     "type": "git",

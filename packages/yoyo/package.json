@@ -1,6 +1,6 @@
 {
   "name": "@web-toybox/yoyo",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A dependency-free, physics-driven yo-yo Web Component.",
   "repository": { "type": "git", "url": "git+https://github.com/bkmashiro/web-toybox.git", "directory": "packages/yoyo" },
   "homepage": "https://bkmashiro.github.io/web-toybox/toys/yoyo/",

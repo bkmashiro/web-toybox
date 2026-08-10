@@ -15,6 +15,10 @@ h1 em { margin-left:.32em; color:var(--green); font-style:normal; }
 button { min-height:43px; padding:0 15px; border:1px solid var(--ink); color:var(--ink); background:rgba(247,231,190,.72); font:800 12px/1 system-ui,sans-serif; cursor:pointer; }
 button.primary { color:#f6e8c3; background:var(--green); }
 button[hidden] { display:none; }
+.volume-control { min-width:168px; min-height:43px; padding:7px 12px 6px; display:grid; gap:5px; border:1px solid rgba(49,36,26,.42); background:rgba(247,231,190,.46); font:800 10px/1 system-ui,sans-serif; letter-spacing:.06em; }
+.volume-control span { display:flex; justify-content:space-between; gap:16px; }
+.volume-control input { width:100%; height:14px; margin:0; accent-color:var(--green); cursor:pointer; }
+.volume-control output { font-variant-numeric:tabular-nums; }
 .telemetry { display:grid; grid-template-columns:repeat(3,1fr); max-width:520px; margin:25px 0 18px; border-top:1px dashed rgba(71,45,27,.32); border-bottom:1px dashed rgba(71,45,27,.32); }
 .telemetry div { padding:13px 0; }
 .telemetry div+div { padding-left:18px; border-left:1px dashed rgba(71,45,27,.32); }
