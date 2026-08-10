@@ -1,44 +1,26 @@
-const DEFAULT_VOLUME = 0.75;
+import {
+  createToySynth,
+  defineSound,
+  defineSynthConfig,
+  toneLayer,
+  type AudioPlaybackState,
+} from '@web-toybox/toy-audio';
+
+export const tangramSynthConfig = defineSynthConfig({
+  volume: 0.75,
+  sounds: {
+    click: defineSound(toneLayer({
+      wave: 'triangle', frequency: 360, duration: 0.055, gain: 0.16,
+    })),
+  },
+});
 
 export class TangramVoice {
-  private context?: AudioContext;
-  private volume = DEFAULT_VOLUME;
+  private readonly synth = createToySynth(tangramSynthConfig);
 
-  get playbackState(): 'uninitialized' | 'suspended' | 'running' | 'unsupported' {
-    if (typeof window === 'undefined' || !(window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext)) return 'unsupported';
-    if (!this.context) return 'uninitialized';
-    return this.context.state === 'running' ? 'running' : 'suspended';
-  }
-
-  setVolume(value: number): void {
-    this.volume = Math.min(1, Math.max(0, Number.isFinite(value) ? value : DEFAULT_VOLUME));
-  }
-
-  async unlock(): Promise<boolean> {
-    if (typeof window === 'undefined') return false;
-    const Context = window.AudioContext ?? (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!Context) return false;
-    this.context ??= new Context();
-    if (this.context.state !== 'running' && this.context.state !== 'closed') await this.context.resume().catch(() => undefined);
-    return this.context.state === 'running';
-  }
-
-  click(pitch = 360): void {
-    const context = this.context;
-    if (!context || context.state !== 'running' || this.volume <= 0) return;
-    const oscillator = context.createOscillator();
-    const gain = context.createGain();
-    oscillator.type = 'triangle';
-    oscillator.frequency.setValueAtTime(pitch, context.currentTime);
-    gain.gain.setValueAtTime(this.volume * 0.16, context.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.055);
-    oscillator.connect(gain).connect(context.destination);
-    oscillator.start();
-    oscillator.stop(context.currentTime + 0.06);
-  }
-
-  destroy(): void {
-    void this.context?.close();
-    this.context = undefined;
-  }
+  get playbackState(): AudioPlaybackState { return this.synth.playbackState; }
+  setVolume(value: number): void { this.synth.setVolume(value); }
+  unlock(): Promise<boolean> { return this.synth.unlock(); }
+  click(pitch = 360): void { this.synth.trigger('click', { pitch: pitch / 360 }); }
+  destroy(): void { this.synth.destroy(); }
 }

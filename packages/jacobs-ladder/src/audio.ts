@@ -1,52 +1,32 @@
-const DEFAULT_VOLUME = 0.75;
-const OUTPUT_BOOST = 2;
+import {
+  createToySynth,
+  defineSound,
+  defineSynthConfig,
+  toneLayer,
+  type AudioPlaybackState,
+} from '@web-toybox/toy-audio';
+
+export const ladderSynthConfig = defineSynthConfig({
+  volume: 0.75,
+  sounds: {
+    strike: defineSound(toneLayer({
+      wave: 'triangle', frequency: 250, duration: 0.075, gain: 0.11,
+      filter: { type: 'lowpass', frequency: 1_250 },
+    })),
+  },
+});
 
 export class LadderVoice {
-  private context?: AudioContext;
-  private enabled = false;
-  private volume = DEFAULT_VOLUME;
+  private readonly synth = createToySynth(ladderSynthConfig);
 
-  get playbackState(): 'uninitialized' | 'suspended' | 'running' | 'unsupported' {
-    if (typeof window === 'undefined' || !(window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext)) return 'unsupported';
-    if (!this.context) return 'uninitialized';
-    return this.context.state === 'running' ? 'running' : 'suspended';
-  }
-
-  setVolume(value: number): void {
-    if (Number.isFinite(value)) this.volume = Math.min(1, Math.max(0, value));
-  }
-
-  async unlock(): Promise<boolean> {
-    if (typeof window === 'undefined') return false;
-    const webkitWindow = window as typeof window & { webkitAudioContext?: typeof AudioContext };
-    const AudioContextClass = window.AudioContext ?? webkitWindow.webkitAudioContext;
-    if (!AudioContextClass) return false;
-    this.context ??= new AudioContextClass();
-    if (this.context.state !== 'running') await this.context.resume().catch(() => undefined);
-    this.enabled = this.context.state === 'running';
-    return this.enabled;
-  }
+  get playbackState(): AudioPlaybackState { return this.synth.playbackState; }
+  setVolume(value: number): void { this.synth.setVolume(value); }
+  unlock(): Promise<boolean> { return this.synth.unlock(); }
 
   strike(index: number, count: number): void {
-    if (!this.enabled || !this.context || this.volume === 0) return;
-    const context = this.context;
-    const oscillator = context.createOscillator();
-    const gain = context.createGain();
-    const filter = context.createBiquadFilter();
-    oscillator.type = 'triangle';
-    oscillator.frequency.value = 250 + index / count * 170;
-    filter.type = 'lowpass';
-    filter.frequency.value = 1250;
-    gain.gain.value = 0.055 * this.volume * OUTPUT_BOOST;
-    oscillator.connect(filter).connect(gain).connect(context.destination);
-    gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.075);
-    oscillator.start();
-    oscillator.stop(context.currentTime + 0.08);
+    const frequency = 250 + index / Math.max(1, count) * 170;
+    this.synth.trigger('strike', { pitch: frequency / 250 });
   }
 
-  destroy(): void {
-    void this.context?.close().catch(() => undefined);
-    this.context = undefined;
-    this.enabled = false;
-  }
+  destroy(): void { this.synth.destroy(); }
 }

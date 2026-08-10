@@ -42,19 +42,49 @@ importers:
         specifier: workspace:*
         version: link:../../packages/yoyo
 
-  packages/jacobs-ladder: {}
+  packages/jacobs-ladder:
+    devDependencies:
+      '@web-toybox/toy-audio':
+        specifier: workspace:*
+        version: link:../toy-audio
 
-  packages/kendama: {}
+  packages/kendama:
+    devDependencies:
+      '@web-toybox/toy-audio':
+        specifier: workspace:*
+        version: link:../toy-audio
 
-  packages/peg-solitaire: {}
+  packages/peg-solitaire:
+    devDependencies:
+      '@web-toybox/toy-audio':
+        specifier: workspace:*
+        version: link:../toy-audio
 
-  packages/sliding-puzzle: {}
+  packages/sliding-puzzle:
+    devDependencies:
+      '@web-toybox/toy-audio':
+        specifier: workspace:*
+        version: link:../toy-audio
 
-  packages/tangram: {}
+  packages/tangram:
+    devDependencies:
+      '@web-toybox/toy-audio':
+        specifier: workspace:*
+        version: link:../toy-audio
 
-  packages/tin-frog: {}
+  packages/tin-frog:
+    devDependencies:
+      '@web-toybox/toy-audio':
+        specifier: workspace:*
+        version: link:../toy-audio
 
-  packages/yoyo: {}
+  packages/toy-audio: {}
+
+  packages/yoyo:
+    devDependencies:
+      '@web-toybox/toy-audio':
+        specifier: workspace:*
+        version: link:../toy-audio
 
 packages:
 

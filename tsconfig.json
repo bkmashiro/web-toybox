@@ -1,6 +1,7 @@
 {
   "files": [],
   "references": [
+    { "path": "./packages/toy-audio" },
     { "path": "./packages/kendama" },
     { "path": "./packages/jacobs-ladder" },
     { "path": "./packages/peg-solitaire" },

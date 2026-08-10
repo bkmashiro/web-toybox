@@ -9,5 +9,6 @@
     "skipLibCheck": true,
     "composite": true
   },
-  "include": ["src", "test"]
+  "include": ["src", "test"],
+  "references": [{ "path": "../toy-audio/tsconfig.build.json" }]
 }

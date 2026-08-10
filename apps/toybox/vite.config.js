@@ -8,6 +8,7 @@ export default defineConfig({
   base: process.env.BASE_PATH ?? '/web-toybox/',
   resolve: {
     alias: {
+      '@web-toybox/toy-audio': resolve(root, '../../packages/toy-audio/src/index.ts'),
       '@web-toybox/kendama': resolve(root, '../../packages/kendama/src/index.ts'),
       '@web-toybox/jacobs-ladder': resolve(root, '../../packages/jacobs-ladder/src/index.ts'),
       '@web-toybox/peg-solitaire': resolve(root, '../../packages/peg-solitaire/src/index.ts'),

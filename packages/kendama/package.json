@@ -25,5 +25,8 @@
   },
   "dependencies": {},
   "scripts": { "build": "vite build --config vite.config.js && tsc -p tsconfig.build.json" },
-  "publishConfig": { "access": "public" }
+  "publishConfig": { "access": "public" },
+  "devDependencies": {
+    "@web-toybox/toy-audio": "workspace:*"
+  }
 }

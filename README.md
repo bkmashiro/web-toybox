@@ -21,12 +21,14 @@ A lightweight collection of physics-driven browser toys, presented as a retro to
 - no toy bundle on the catalogue page;
 - lazy audio creation after a trusted user gesture, with automatic unlock detection and a visible fallback;
 - independent ESM, UMD/CJS and TypeScript declaration output;
+- configuration-driven procedural sound through `@web-toybox/toy-audio`, bundled into each toy at build time;
 - a 30 KB gzip JavaScript budget per toy package.
 
 ## Workspace
 
 ```text
 apps/toybox/            static catalogue and independent toy pages
+packages/toy-audio/      lazy synthesizer, sound configs, and tone/noise helpers
 packages/kendama/       rigid-ball kendama
 packages/yoyo/          spinning yo-yo
 packages/jacobs-ladder/ reversible slat cascade

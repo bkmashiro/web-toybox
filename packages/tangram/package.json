@@ -15,5 +15,8 @@
   "exports": {".": {"types":"./dist/index.d.ts","import":"./dist/tangram.js","require":"./dist/tangram.umd.cjs"}},
   "dependencies": {},
   "publishConfig": {"access":"public"},
-  "scripts": {"build":"vite build --config vite.config.js && tsc -p tsconfig.build.json"}
+  "scripts": {"build":"vite build --config vite.config.js && tsc -p tsconfig.build.json"},
+  "devDependencies": {
+    "@web-toybox/toy-audio": "workspace:*"
+  }
 }
