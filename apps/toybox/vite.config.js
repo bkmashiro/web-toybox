@@ -9,6 +9,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@web-toybox/kendama': resolve(root, '../../packages/kendama/src/index.ts'),
+      '@web-toybox/jacobs-ladder': resolve(root, '../../packages/jacobs-ladder/src/index.ts'),
       '@web-toybox/yoyo': resolve(root, '../../packages/yoyo/src/index.ts'),
     },
   },
@@ -19,6 +20,7 @@ export default defineConfig({
       input: {
         index: resolve(root, 'index.html'),
         'toys/kendama/index': resolve(root, 'toys/kendama/index.html'),
+        'toys/jacobs-ladder/index': resolve(root, 'toys/jacobs-ladder/index.html'),
         'toys/yoyo/index': resolve(root, 'toys/yoyo/index.html'),
       },
     },

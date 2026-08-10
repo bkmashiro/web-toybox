@@ -2,6 +2,7 @@
   "files": [],
   "references": [
     { "path": "./packages/kendama" },
+    { "path": "./packages/jacobs-ladder" },
     { "path": "./packages/yoyo" },
     { "path": "./apps/toybox" }
   ]

@@ -32,7 +32,8 @@ export const toys: ToyCard[] = [
   {
     name: '翻板', kana: "JACOB'S LADDER", verb: '翻',
     description: '一串木片接力落下，像一小段不会结束的瀑布。',
-    image: new URL('./cards/ladder.svg', import.meta.url).href, status: '制作中',
+    image: new URL('./cards/ladder.svg', import.meta.url).href,
+    href: './toys/jacobs-ladder/', packageName: '@web-toybox/jacobs-ladder · preview', status: '可玩',
   },
   {
     name: '铁皮青蛙', kana: 'TIN FROG', verb: '拧',

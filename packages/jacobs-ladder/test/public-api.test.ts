@@ -1,0 +1,1 @@
+import{describe,expect,it}from'vitest';describe('ladder package boundary',()=>{it('imports without DOM globals',async()=>{await expect(import('../src/index')).resolves.toMatchObject({mountJacobsLadder:expect.any(Function),createLadderState:expect.any(Function)});})});

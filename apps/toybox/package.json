@@ -5,6 +5,7 @@
   "type": "module",
   "dependencies": {
     "@web-toybox/kendama": "workspace:*",
+    "@web-toybox/jacobs-ladder": "workspace:*",
     "@web-toybox/yoyo": "workspace:*"
   }
 }
