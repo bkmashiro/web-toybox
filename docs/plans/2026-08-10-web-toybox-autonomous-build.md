@@ -106,11 +106,11 @@ For each package also run tarball ESM/CJS consumer smoke and SSR import. For UI 
 
 ### Track E — Batch npm release preparation
 
-- [ ] Add a dependency-free package discovery/version-existence script with tests or deterministic dry-run fixtures.
-- [ ] Add one Trusted Publishing workflow with OIDC, provenance, manual dispatch, and tag support.
-- [ ] Document exact npm-side setup per package and first-publication boundary.
-- [ ] Validate workflow syntax and local dry-run without publishing.
-- [ ] Signed local commit; leave push/publish/deploy blocked for owner return.
+- [x] Add a dependency-free package discovery/version-existence script with tests or deterministic dry-run fixtures.
+- [x] Add one Trusted Publishing workflow with OIDC, provenance, manual dispatch, and tag support.
+- [x] Document exact npm-side setup per package and first-publication boundary.
+- [x] Validate workflow syntax and local dry-run without publishing.
+- [x] Signed local commit; leave push/publish/deploy blocked for owner return.
 
 ## Per-slice protocol
 
@@ -135,6 +135,7 @@ Continue automatically after each verified slice. Stop only when all executable 
 - 2026-08-10: Yo-yo package and page implemented. Four deterministic physics tests cover string limits, throw-to-spin transfer, sleep, and return. Mobile touch QA raised spin from 8 to 29.6 rad/s and shortened the returning string from 250 to 152 px. ESM/CJS tarball consumers, SSR import, size gate (3.70 KiB gzip), zero-overflow, and zero-error checks passed.
 - 2026-08-10: Jacob's ladder package and page implemented. The deterministic cascade releases slats in order, counts one impact per slat, and reverses over the same state. Browser QA observed only the first three slats active at 650 ms, then exact 8/8 forward and reverse completion. ESM/CJS tarball consumers, SSR import, size gate (2.81 KiB gzip), sound, overflow, and error checks passed.
 - 2026-08-10: Tin frog package and page implemented. Holding the wind control stores bounded spring energy and emits gear pulses; release drives a cam cycle into finite ballistic hops and explicit landings. Browser QA stored 74% energy in 1.25 seconds, observed an upward velocity near -273 px/s, then a real landing after one hop. ESM/CJS tarball consumers, SSR import, size gate (3.44 KiB gzip), sound, overflow, and error checks passed.
+- 2026-08-10: Batch npm release preparation completed. One workflow validates the full workspace, discovers exact package versions absent from npm, dry-runs each tarball, and publishes only missing versions under GitHub OIDC. Three release-planner tests, YAML parsing, a four-package live registry dry-run, and the local publish refusal passed. npm scope ownership and four bootstrap package records remain owner-attended.
 
 ## Owner-attended blockers
 

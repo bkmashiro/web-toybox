@@ -5,8 +5,10 @@ A lightweight collection of physics-driven browser toys, presented as a retro to
 ## Current toys
 
 - **竹知了** — links to the published [`zhuzhiliao`](https://www.npmjs.com/package/zhuzhiliao) toy.
-- **剑玉** — the first package developed inside this monorepo; playable now, npm release pending.
-- **悠悠球 / 翻板 / 铁皮青蛙** — planned.
+- **剑玉** — finite-radius ball, rotating hole, cup/rim contact, and angle-gated hard mode.
+- **悠悠球** — constrained string, disc spin, sleep, return, and procedural hum.
+- **翻板** — deterministic wooden-slat cascade that flips in both directions.
+- **铁皮青蛙** — wind-up spring, cam gait, ballistic hops, and tin/gear sound.
 
 ## Principles
 
@@ -21,9 +23,12 @@ A lightweight collection of physics-driven browser toys, presented as a retro to
 ## Workspace
 
 ```text
-apps/toybox/       static catalogue and independent toy pages
-packages/kendama/  dependency-free kendama package
-scripts/           build hygiene and size checks
+apps/toybox/            static catalogue and independent toy pages
+packages/kendama/       rigid-ball kendama
+packages/yoyo/          spinning yo-yo
+packages/jacobs-ladder/ reversible slat cascade
+packages/tin-frog/      wind-up hopping frog
+scripts/                build, size, and release checks
 ```
 
 ## Development
@@ -38,6 +43,8 @@ pnpm size
 ```
 
 The production site is written to `site/`. Generated output and dependency directories are not committed.
+
+See [`docs/npm-publishing.md`](docs/npm-publishing.md) for the single-workflow, independent-version Trusted Publishing setup.
 
 ## License
 
