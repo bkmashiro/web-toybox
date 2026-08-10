@@ -16,7 +16,7 @@ A manual workflow run defaults to dry-run. Checking **publish**, or pushing a `r
 
 ## One-time npm setup
 
-The current package names use the `@web-toybox` scope. Before publishing, the owner must either own/create that npm organization scope or rename the packages to a scope they control.
+The `@web-toybox` npm organization exists and `bkmsr` is its owner. Public organization packages use npm's free plan.
 
 Trusted Publisher settings are configured once **for each npm package** because npm stores trust on the package record. Use the same values each time:
 
@@ -27,7 +27,27 @@ Trusted Publisher settings are configured once **for each npm package** because 
 - Environment: leave empty unless the workflow is later changed to use one
 - Permission: publish
 
-A package record must exist before its Trusted Publisher can be configured. Therefore each new package needs one owner-attended bootstrap publication with npm login and 2FA, followed immediately by Trusted Publisher configuration. After that, revoke any old automation token; normal releases require no `NPM_TOKEN`.
+A package record must exist before its Trusted Publisher can be configured. Do not configure packages one by one in the website. The batch bootstrap command discovers every missing package, first-publishes it, then applies the shared trust configuration:
+
+```bash
+pnpm npm:bootstrap -- --execute
+```
+
+Run it in an interactive terminal because npm requires account-level 2FA. npm documents a five-minute verification window for bulk `npm trust` calls. The script waits two seconds between packages to avoid rate limiting.
+
+If authentication interrupts the process after a package record was created, repair trust without republishing:
+
+```bash
+pnpm npm:bootstrap -- --execute --trust-existing
+```
+
+Dry-run without registry writes:
+
+```bash
+pnpm npm:bootstrap
+```
+
+After bootstrap, normal releases require no `NPM_TOKEN`.
 
 ## Independent versions
 

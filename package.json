@@ -12,6 +12,7 @@
     "build:site": "vite build --config apps/toybox/vite.config.js",
     "build": "pnpm build:packages && pnpm build:site",
     "size": "node scripts/size-check.mjs",
+    "npm:bootstrap": "node scripts/bootstrap-npm-trust.mjs",
     "clean": "node scripts/clean.mjs"
   },
   "devDependencies": {
