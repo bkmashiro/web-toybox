@@ -2,8 +2,6 @@ import { spawn } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 import {
   discoverPackages,
-  planReleases,
-  registryHasVersion,
 } from './release-packages.mjs';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -14,6 +12,43 @@ function run(command, args, options = {}) {
     child.on('error', reject);
     child.on('close', code => resolve(code ?? 1));
   });
+}
+
+function runCapture(command, args, options = {}) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, { ...options, stdio: ['ignore', 'pipe', 'pipe'] });
+    let stdout = '';
+    let stderr = '';
+    child.stdout.on('data', data => { stdout += data; });
+    child.stderr.on('data', data => { stderr += data; });
+    child.on('error', reject);
+    child.on('close', code => resolve({ code: code ?? 1, stdout, stderr }));
+  });
+}
+
+export async function registryHasPackage(name) {
+  const result = await runCapture('npm', ['view', name, 'name', '--json']);
+  if (result.code === 0) {
+    if (!result.stdout.trim()) return false;
+    try {
+      const value = JSON.parse(result.stdout);
+      if (value === name) return true;
+      if (Array.isArray(value)) return value.includes(name) || value.some(item => item?.name === name);
+      return value?.name === name;
+    } catch {
+      return result.stdout.replaceAll('"', '').trim() === name;
+    }
+  }
+  if (/E404|404 Not Found|is not in this registry/i.test(`${result.stdout}\n${result.stderr}`)) return false;
+  throw new Error(`npm view failed for ${name}: ${result.stderr.trim()}`);
+}
+
+export async function planBootstraps(packages, exists) {
+  const plan = [];
+  for (const pkg of packages) {
+    if (!await exists(pkg.name)) plan.push(pkg);
+  }
+  return plan;
 }
 
 export function bootstrapCommands(pkg, includePublish = true) {
@@ -55,7 +90,7 @@ async function main() {
 
   const root = new URL('..', import.meta.url).pathname;
   const packages = await discoverPackages(root);
-  const missing = await planReleases(packages, registryHasVersion);
+  const missing = await planBootstraps(packages, registryHasPackage);
   const targets = trustExisting ? packages : missing;
 
   if (!targets.length) {
