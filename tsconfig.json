@@ -3,6 +3,7 @@
   "references": [
     { "path": "./packages/kendama" },
     { "path": "./packages/jacobs-ladder" },
+    { "path": "./packages/tin-frog" },
     { "path": "./packages/yoyo" },
     { "path": "./apps/toybox" }
   ]

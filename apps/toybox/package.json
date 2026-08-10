@@ -6,6 +6,7 @@
   "dependencies": {
     "@web-toybox/kendama": "workspace:*",
     "@web-toybox/jacobs-ladder": "workspace:*",
+    "@web-toybox/tin-frog": "workspace:*",
     "@web-toybox/yoyo": "workspace:*"
   }
 }

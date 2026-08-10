@@ -99,10 +99,10 @@ For each package also run tarball ESM/CJS consumer smoke and SSR import. For UI 
 
 ### Track D — Wind-up tin frog
 
-- [ ] Write deterministic spring-energy, cam/gait, hop, and landing tests.
-- [ ] Implement winding input, gait/hop simulation, procedural tin/gear sound, API, and package.
-- [ ] Add detail page and activate catalogue card.
-- [ ] Browser/touch QA, package smokes, gates, signed local commit.
+- [x] Write deterministic spring-energy, cam/gait, hop, and landing tests.
+- [x] Implement winding input, gait/hop simulation, procedural tin/gear sound, API, and package.
+- [x] Add detail page and activate catalogue card.
+- [x] Browser/touch QA, package smokes, gates, signed local commit.
 
 ### Track E — Batch npm release preparation
 
@@ -134,6 +134,7 @@ Continue automatically after each verified slice. Stop only when all executable 
 - 2026-08-10: Kendama hard mode implemented. Nine tests pass; hard mode uses rotating ball state, hole-attached rope torque, release grace, narrow cup mouths/rim response, and angle/speed-gated spike insertion. Mobile touch QA confirmed angular motion, no immediate recatch, mode switching, zero overflow, and zero page errors.
 - 2026-08-10: Yo-yo package and page implemented. Four deterministic physics tests cover string limits, throw-to-spin transfer, sleep, and return. Mobile touch QA raised spin from 8 to 29.6 rad/s and shortened the returning string from 250 to 152 px. ESM/CJS tarball consumers, SSR import, size gate (3.70 KiB gzip), zero-overflow, and zero-error checks passed.
 - 2026-08-10: Jacob's ladder package and page implemented. The deterministic cascade releases slats in order, counts one impact per slat, and reverses over the same state. Browser QA observed only the first three slats active at 650 ms, then exact 8/8 forward and reverse completion. ESM/CJS tarball consumers, SSR import, size gate (2.81 KiB gzip), sound, overflow, and error checks passed.
+- 2026-08-10: Tin frog package and page implemented. Holding the wind control stores bounded spring energy and emits gear pulses; release drives a cam cycle into finite ballistic hops and explicit landings. Browser QA stored 74% energy in 1.25 seconds, observed an upward velocity near -273 px/s, then a real landing after one hop. ESM/CJS tarball consumers, SSR import, size gate (3.44 KiB gzip), sound, overflow, and error checks passed.
 
 ## Owner-attended blockers
 

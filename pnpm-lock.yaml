@@ -26,6 +26,9 @@ importers:
       '@web-toybox/kendama':
         specifier: workspace:*
         version: link:../../packages/kendama
+      '@web-toybox/tin-frog':
+        specifier: workspace:*
+        version: link:../../packages/tin-frog
       '@web-toybox/yoyo':
         specifier: workspace:*
         version: link:../../packages/yoyo
@@ -33,6 +36,8 @@ importers:
   packages/jacobs-ladder: {}
 
   packages/kendama: {}
+
+  packages/tin-frog: {}
 
   packages/yoyo: {}
 

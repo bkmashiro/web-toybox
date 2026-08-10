@@ -1,0 +1,1 @@
+export{FrogVoice}from'./audio';export{createFrogState,resetFrog,startWinding,stepFrog,stopWinding}from'./physics';export type{FrogBounds,FrogPhase,FrogState}from'./physics';export{defineTinFrog,mountTinFrog,TinFrogElement}from'./frog';export type{TinFrogOptions}from'./frog';import{defineTinFrog}from'./frog';defineTinFrog();

@@ -37,7 +37,8 @@ export const toys: ToyCard[] = [
   },
   {
     name: '铁皮青蛙', kana: 'TIN FROG', verb: '拧',
-    description: '给发条拧几圈，看齿轮和薄铁皮把它送过桌面。',
-    image: new URL('./cards/frog.svg', import.meta.url).href, status: '制作中',
+    description: '上紧发条，看薄铁皮和小齿轮把青蛙一步步送出去。',
+    image: new URL('./cards/frog.svg', import.meta.url).href,
+    href: './toys/tin-frog/', packageName: '@web-toybox/tin-frog · preview', status: '可玩',
   },
 ];

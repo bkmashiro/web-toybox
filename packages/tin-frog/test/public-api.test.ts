@@ -1,0 +1,1 @@
+import{describe,expect,it}from'vitest';describe('frog package boundary',()=>{it('imports without DOM globals',async()=>{await expect(import('../src/index')).resolves.toMatchObject({mountTinFrog:expect.any(Function),createFrogState:expect.any(Function)});})});

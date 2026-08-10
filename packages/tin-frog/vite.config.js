@@ -1,0 +1,1 @@
+import{defineConfig}from'vite';import{resolve}from'node:path';export default defineConfig({build:{outDir:resolve(import.meta.dirname,'dist'),emptyOutDir:true,lib:{entry:resolve(import.meta.dirname,'src/index.ts'),name:'WebTinFrog',formats:['es','umd'],fileName:f=>f==='es'?'tin-frog.js':'tin-frog.umd.cjs'},rollupOptions:{output:{exports:'named'}}}});
