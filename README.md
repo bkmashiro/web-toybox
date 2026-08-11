@@ -32,9 +32,12 @@ packages/toy-audio/      lazy synthesizer, sound configs, and tone/noise helpers
 packages/kendama/       rigid-ball kendama
 packages/yoyo/          spinning yo-yo
 packages/jacobs-ladder/ reversible slat cascade
+packages/marble-maze/    tilt-controlled wooden maze
+packages/paper-football/ flicked tabletop goal game
 packages/tangram/        seven-piece freeform puzzle
 packages/sliding-puzzle/ solvable fifteen puzzle
 packages/peg-solitaire/  single-player jump puzzle
+packages/pinboard/       peg-collision scoring board
 packages/tin-frog/      wind-up hopping frog
 scripts/                build, size, and release checks
 ```

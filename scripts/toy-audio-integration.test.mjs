@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { discoverPackages } from './release-packages.mjs';
 
 const root = new URL('..', import.meta.url).pathname;
-const toys = ['kendama', 'yoyo', 'jacobs-ladder', 'tin-frog', 'tangram', 'sliding-puzzle', 'peg-solitaire'];
+const toys = ['kendama', 'yoyo', 'jacobs-ladder', 'tin-frog', 'tangram', 'sliding-puzzle', 'peg-solitaire', 'marble-maze', 'pinboard', 'paper-football'];
 
 describe('toy-audio workspace integration', () => {
   it('discovers toy-audio as an independent zero-runtime package', async () => {

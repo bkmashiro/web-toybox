@@ -26,9 +26,18 @@ importers:
       '@web-toybox/kendama':
         specifier: workspace:*
         version: link:../../packages/kendama
+      '@web-toybox/marble-maze':
+        specifier: workspace:*
+        version: link:../../packages/marble-maze
+      '@web-toybox/paper-football':
+        specifier: workspace:*
+        version: link:../../packages/paper-football
       '@web-toybox/peg-solitaire':
         specifier: workspace:*
         version: link:../../packages/peg-solitaire
+      '@web-toybox/pinboard':
+        specifier: workspace:*
+        version: link:../../packages/pinboard
       '@web-toybox/sliding-puzzle':
         specifier: workspace:*
         version: link:../../packages/sliding-puzzle
@@ -54,7 +63,25 @@ importers:
         specifier: workspace:*
         version: link:../toy-audio
 
+  packages/marble-maze:
+    devDependencies:
+      '@web-toybox/toy-audio':
+        specifier: workspace:*
+        version: link:../toy-audio
+
+  packages/paper-football:
+    devDependencies:
+      '@web-toybox/toy-audio':
+        specifier: workspace:*
+        version: link:../toy-audio
+
   packages/peg-solitaire:
+    devDependencies:
+      '@web-toybox/toy-audio':
+        specifier: workspace:*
+        version: link:../toy-audio
+
+  packages/pinboard:
     devDependencies:
       '@web-toybox/toy-audio':
         specifier: workspace:*

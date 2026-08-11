@@ -1,0 +1,20 @@
+{
+  "name": "@web-toybox/paper-football",
+  "version": "0.0.1",
+  "description": "A dependency-free tabletop paper football Web Component.",
+  "repository": {"type":"git","url":"git+https://github.com/bkmashiro/web-toybox.git","directory":"packages/paper-football"},
+  "homepage": "https://bkmashiro.github.io/web-toybox/toys/paper-football/",
+  "bugs": "https://github.com/bkmashiro/web-toybox/issues",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": true,
+  "files": ["dist","README.md","LICENSE"],
+  "main": "./dist/paper-football.umd.cjs",
+  "module": "./dist/paper-football.js",
+  "types": "./dist/index.d.ts",
+  "exports": {".": {"types":"./dist/index.d.ts","import":"./dist/paper-football.js","require":"./dist/paper-football.umd.cjs"}},
+  "dependencies": {},
+  "publishConfig": {"access":"public"},
+  "scripts": {"build":"vite build --config vite.config.js && tsc -p tsconfig.build.json"},
+  "devDependencies": {"@web-toybox/toy-audio":"workspace:*"}
+}

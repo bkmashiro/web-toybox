@@ -6,7 +6,10 @@
   "dependencies": {
     "@web-toybox/kendama": "workspace:*",
     "@web-toybox/jacobs-ladder": "workspace:*",
+    "@web-toybox/marble-maze": "workspace:*",
+    "@web-toybox/paper-football": "workspace:*",
     "@web-toybox/peg-solitaire": "workspace:*",
+    "@web-toybox/pinboard": "workspace:*",
     "@web-toybox/sliding-puzzle": "workspace:*",
     "@web-toybox/tangram": "workspace:*",
     "@web-toybox/tin-frog": "workspace:*",

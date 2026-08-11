@@ -1,0 +1,20 @@
+{
+  "name": "@web-toybox/marble-maze",
+  "version": "0.0.1",
+  "description": "A dependency-free wooden marble maze Web Component.",
+  "repository": {"type":"git","url":"git+https://github.com/bkmashiro/web-toybox.git","directory":"packages/marble-maze"},
+  "homepage": "https://bkmashiro.github.io/web-toybox/toys/marble-maze/",
+  "bugs": "https://github.com/bkmashiro/web-toybox/issues",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": true,
+  "files": ["dist","README.md","LICENSE"],
+  "main": "./dist/marble-maze.umd.cjs",
+  "module": "./dist/marble-maze.js",
+  "types": "./dist/index.d.ts",
+  "exports": {".": {"types":"./dist/index.d.ts","import":"./dist/marble-maze.js","require":"./dist/marble-maze.umd.cjs"}},
+  "dependencies": {},
+  "publishConfig": {"access":"public"},
+  "scripts": {"build":"vite build --config vite.config.js && tsc -p tsconfig.build.json"},
+  "devDependencies": {"@web-toybox/toy-audio":"workspace:*"}
+}

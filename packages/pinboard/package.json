@@ -1,0 +1,20 @@
+{
+  "name": "@web-toybox/pinboard",
+  "version": "0.0.1",
+  "description": "A dependency-free brass peg pinboard Web Component.",
+  "repository": {"type":"git","url":"git+https://github.com/bkmashiro/web-toybox.git","directory":"packages/pinboard"},
+  "homepage": "https://bkmashiro.github.io/web-toybox/toys/pinboard/",
+  "bugs": "https://github.com/bkmashiro/web-toybox/issues",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": true,
+  "files": ["dist","README.md","LICENSE"],
+  "main": "./dist/pinboard.umd.cjs",
+  "module": "./dist/pinboard.js",
+  "types": "./dist/index.d.ts",
+  "exports": {".": {"types":"./dist/index.d.ts","import":"./dist/pinboard.js","require":"./dist/pinboard.umd.cjs"}},
+  "dependencies": {},
+  "publishConfig": {"access":"public"},
+  "scripts": {"build":"vite build --config vite.config.js && tsc -p tsconfig.build.json"},
+  "devDependencies": {"@web-toybox/toy-audio":"workspace:*"}
+}

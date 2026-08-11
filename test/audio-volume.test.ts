@@ -1,7 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { KendamaVoice } from '../packages/kendama/src/audio';
 import { LadderVoice } from '../packages/jacobs-ladder/src/audio';
+import { MarbleMazeVoice } from '../packages/marble-maze/src/audio';
+import { PaperFootballVoice } from '../packages/paper-football/src/audio';
 import { PegVoice } from '../packages/peg-solitaire/src/audio';
+import { PinboardVoice } from '../packages/pinboard/src/audio';
 import { SlidingVoice } from '../packages/sliding-puzzle/src/audio';
 import { TangramVoice } from '../packages/tangram/src/audio';
 import { FrogVoice } from '../packages/tin-frog/src/audio';
@@ -97,9 +100,24 @@ describe('procedural voice volume', () => {
 
   it('reports unsupported audio without constructing a context', () => {
     vi.stubGlobal('window', {});
-    expect([new TangramVoice(), new SlidingVoice(), new PegVoice()].map((voice) => voice.playbackState))
-      .toEqual(['unsupported', 'unsupported', 'unsupported']);
+    expect([new TangramVoice(), new SlidingVoice(), new PegVoice(), new MarbleMazeVoice(), new PinboardVoice(), new PaperFootballVoice()].map((voice) => voice.playbackState))
+      .toEqual(['unsupported', 'unsupported', 'unsupported', 'unsupported', 'unsupported', 'unsupported']);
     expect(FakeAudioContext.instances).toHaveLength(0);
+  });
+
+  it('keeps all three physical game voices lazy and volume-controlled', async () => {
+    const maze = new MarbleMazeVoice();
+    const pinboard = new PinboardVoice();
+    const football = new PaperFootballVoice();
+    expect(FakeAudioContext.instances).toHaveLength(0);
+    for (const voice of [maze, pinboard, football]) {
+      voice.setVolume(0.4);
+      await voice.unlock();
+    }
+    maze.wall();
+    pinboard.peg();
+    football.rail();
+    expect(FakeAudioContext.instances).toHaveLength(3);
   });
 
   it('applies a normalized maximum volume to every voice', async () => {
