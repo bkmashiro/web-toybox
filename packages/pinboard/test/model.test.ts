@@ -16,7 +16,8 @@ describe('pinboard model', () => {
     Object.assign(state.ball, { active: true, x: peg.x, y: peg.y - peg.radius - state.ball.radius + 1, vx: 0, vy: 180 });
     const result = stepPinboard(state, 1 / 60);
     expect(result.pegHits).toBeGreaterThan(0);
-    expect(state.ball.vy).toBeLessThan(180);
+    expect(state.ball.vy).toBeLessThan(0);
+    expect(Math.abs(state.ball.vx)).toBeGreaterThan(0);
   });
 
   it('awards the pocket and prepares the next marble', () => {
@@ -28,5 +29,13 @@ describe('pinboard model', () => {
     expect(state.score).toBe(50);
     expect(state.drops).toBe(1);
     expect(state.ball.active).toBe(false);
+  });
+
+  it('lets the default centre drop reach a pocket instead of balancing on a peg', () => {
+    const state = createPinboardState(500, 420);
+    dropPinboardBall(state);
+    for (let step = 0; step < 1_200 && state.drops === 0; step += 1) stepPinboard(state, 1 / 120);
+    expect(state.drops).toBe(1);
+    expect(state.score).toBeGreaterThan(0);
   });
 });

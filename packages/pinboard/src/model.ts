@@ -93,6 +93,9 @@ export function stepPinboard(state: PinboardState, seconds: number): PinboardSte
       ball.vx -= 1.72 * normalSpeed * nx;
       ball.vy -= 1.72 * normalSpeed * ny;
     }
+    if (Math.abs(dx) < minimum * 0.08 && Math.abs(ball.vx) < 20) {
+      ball.vx = peg.id % 2 === 0 ? 48 : -48;
+    }
     touching = peg.id;
     if (ball.lastPeg !== peg.id) pegHits += 1;
   }
